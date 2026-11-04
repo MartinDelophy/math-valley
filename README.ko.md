@@ -1,0 +1,28 @@
+# Math Valley
+
+[English](README.md) | [中文](README.zh-CN.md) | [日本語](README.ja.md) | **한국어**
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Math_Valley-47776e?style=flat-square)](https://math-valley.vercel.app/)
+[![Build and tests](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml/badge.svg)](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted_on-Vercel-black?style=flat-square&logo=vercel)](https://math-valley.vercel.app/)
+
+**온라인 주소: [https://math-valley.vercel.app/](https://math-valley.vercel.app/)**
+
+입체 건축을 회전하고 여러 층을 탐험하며 수학적 구성과 증명으로 진행하는 퍼즐 게임입니다. 중국어, 영어, 일본어, 한국어를 지원합니다. ‘여정 메뉴 → 언어’에서 바꾸어도 현재 풀이 상태는 유지됩니다.
+
+![Math Valley](docs/screenshots/gameplay-en.png)
+
+프롤로그와 함께 1장 ‘다리와 연결’ 16단계, 2장 ‘순환의 탑’ 12단계가 있습니다. 신장 트리, 서로소 경로, 유량부터 호모토피와 피복 공간까지 다룹니다. 대학 수학의 기초가 있는 학습자를 대상으로 합니다.
+
+Node.js 20+와 npm을 준비한 뒤 프로젝트 폴더에서 실행하세요.
+
+```sh
+npm ci
+npm run dev -- --host 127.0.0.1
+```
+
+표시된 로컬 URL을 WebGL 지원 브라우저로 여세요. Q / E 또는 드래그로 시점을 회전하고 장면이나 수첩의 조작을 선택하세요. 언어와 완료 기록은 브라우저에 저장됩니다. 페이지 전체를 새로고침하면 현재 미완료 경로는 초기화됩니다.
+
+현재 플레이 가능한 프로토타입입니다. [개발 및 검증 방법](README.md)
+
+정식 버전은 [Vercel](https://math-valley.vercel.app/)에서 이용할 수 있습니다. GitHub의 `main`에 푸시하면 업데이트됩니다. [Netlify 버전](https://math-valley.netlify.app/)도 유지됩니다. [배포 안내](docs/deployment.md)

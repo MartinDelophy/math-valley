@@ -1,10 +1,20 @@
 # Math Valley · 数学漫游
 
+**English** | [中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Math_Valley-47776e?style=flat-square)](https://math-valley.vercel.app/)
+[![Build and tests](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml/badge.svg)](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted_on-Vercel-black?style=flat-square&logo=vercel)](https://math-valley.vercel.app/)
+
+**Live URL: [https://math-valley.vercel.app/](https://math-valley.vercel.app/)**
+
 A playable 3D mathematics journey. Rotate miniature architecture, traverse layered galleries, build mathematical objects, and submit evidence for your solution.
 
 **中文 · English · 日本語 · 한국어** — change language in **Journey menu → Language**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
 
 ![Math Valley gameplay](docs/screenshots/gameplay-en.png)
+
+[Play online](https://math-valley.vercel.app/) · [Report an issue](https://github.com/MartinDelophy/math-valley/issues)
 
 ## What you can play
 
@@ -49,6 +59,29 @@ On macOS, after building, you can also double-click `开始数学漫游.command`
 
 Chapter progress is stored locally in the browser. Changing ports or browsers gives a separate save. The completed levels and last selected level are saved; an unfinished route is kept during play and language changes, and restarts on a full page reload.
 
+## Deploy
+
+The primary live app is **[math-valley.vercel.app](https://math-valley.vercel.app/)**. The Vercel project is connected to this GitHub repository; pushes to `main` build and deploy production updates.
+
+[`vercel.json`](vercel.json) uses the Vite preset, runs `npm run build`, publishes `dist/client`, and configures the SPA fallback. For a manual deployment:
+
+```sh
+npx vercel link --project math-valley
+npx vercel build --prod
+npx vercel deploy --prebuilt --prod
+```
+
+### Alternative: Netlify
+
+The existing **[Netlify version](https://math-valley.netlify.app/)** remains available. [`netlify.toml`](netlify.toml) uses the same build command and publish directory.
+
+```sh
+npx netlify-cli link --id 0c77e644-ebe8-45b6-98f6-2bc381f63360
+npx netlify-cli deploy --prod
+```
+
+For both platforms, see [deployment details](docs/deployment.md).
+
 ## Development and validation
 
 ```sh
@@ -67,5 +100,3 @@ The checks cover authored puzzle solvability, graph and topology rules, covering
 See [localization notes](docs/localization.md) for adding a language and [asset credits](docs/assets.md) for the visual assets.
 
 This is a playable prototype. Architectural ornament and difficulty balancing remain open for refinement. The game is independently authored and is not affiliated with Monument Valley or its creators.
-
-[中文说明](README.zh-CN.md) · [日本語](docs/README.ja.md) · [한국어](docs/README.ko.md)

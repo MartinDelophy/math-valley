@@ -2,11 +2,13 @@ node_modules/
 dist/
 .DS_Store
 *.log
-.env
-.env.*
+.env*
 !.env.example
 # Local reference artwork, source snapshots and private workspace records.
 reference/
 AGENTS.md
 design-qa.md
 work/
+# Machine-local hosting linkage and deployment output.
+.netlify/
+.vercel/

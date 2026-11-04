@@ -1,5 +1,13 @@
 # Math Valley · 数学漫游
 
+[English](README.md) | **中文** | [日本語](README.ja.md) | [한국어](README.ko.md)
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Math_Valley-47776e?style=flat-square)](https://math-valley.vercel.app/)
+[![Build and tests](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml/badge.svg)](https://github.com/MartinDelophy/math-valley/actions/workflows/checks.yml)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted_on-Vercel-black?style=flat-square&logo=vercel)](https://math-valley.vercel.app/)
+
+**在线地址: [https://math-valley.vercel.app/](https://math-valley.vercel.app/)**
+
 通过立体空间解谜学习数学的本地网页游戏。旋转视角、探索多层建筑、操作机关，再用数学构造和证明完成关卡。
 
 支持 **简体中文、英文、日文、韩文**。在左上角「旅途菜单 → 语言」切换；当前层数、路径、印记和行动余量会保留，语言偏好自动保存。
@@ -38,3 +46,21 @@ npm test
 ```
 
 目前为可玩原型，美术细节和难度仍可迭代。更多开发信息见 [English README](README.md)。
+
+## 部署
+
+正式入口：[https://math-valley.vercel.app/](https://math-valley.vercel.app/)。Vercel 已连接本 GitHub 仓库，推送到 `main` 会自动构建并部署。
+
+项目提供 [vercel.json](vercel.json)，构建命令为 `npm run build`，发布目录为 `dist/client`。手动部署：
+
+```sh
+npx vercel link --project math-valley
+npx vercel build --prod
+npx vercel deploy --prebuilt --prod
+```
+
+### Netlify 备用版本
+
+[https://math-valley.netlify.app/](https://math-valley.netlify.app/) 继续保留。对应配置是 [netlify.toml](netlify.toml)，同样发布 `dist/client`。
+
+详细维护流程见 [部署说明](docs/deployment.md)。
