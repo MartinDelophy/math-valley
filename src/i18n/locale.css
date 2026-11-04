@@ -1,0 +1,47 @@
+.language-picker{border:0;padding:0;margin:12px 0 0;min-width:0;color:var(--ink,#614b50)}
+.language-picker legend{font-size:12px;opacity:.7;margin-bottom:8px;padding:0}
+.language-picker>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.language-picker button{font-family:inherit;font-size:12px!important;min-height:35px;justify-content:center!important;padding:5px 3px!important;border:1px solid #b5986966!important;border-radius:4px;background:transparent;color:inherit;cursor:pointer}
+.language-picker button[aria-pressed=true]{background:#47776e;color:#fff6dc;border-color:#a88b50!important}
+.language-picker button:focus-visible{outline:2px solid #568c81;outline-offset:3px}
+:lang(en) .game-shell{font-family:Georgia,'Times New Roman',serif}
+:lang(ja) .game-shell{font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP','Noto Serif SC',serif}
+:lang(ko) .game-shell{font-family:'AppleMyungjo','Batang','Noto Serif CJK KR','Noto Serif SC',serif}
+:lang(en) .folded-heading h1{font-size:clamp(18px,2.1vw,32px);letter-spacing:.02em}
+:lang(en) .paper-goal{font-size:clamp(18px,1.7vw,27px);line-height:1.3;letter-spacing:0}
+:lang(en) .paper-primary{font-size:clamp(17px,1.7vw,26px);line-height:1.2;min-height:58px;padding:12px 23px;white-space:normal}
+:lang(en) .paper-context h3{font-size:clamp(22px,2vw,31px);letter-spacing:0}
+:lang(en) .chapter-kicker{font-size:clamp(12px,1.2vw,20px)}
+:lang(en) .chapter-select-tabs button{font-size:12px;line-height:1.35}
+:lang(en) .chapter-list strong{font-size:clamp(14px,1.3vw,20px);line-height:1.2}
+:lang(en) .chapter-list small{font-size:10px;letter-spacing:0}
+:lang(en) .journal-page-heading h2{font-size:clamp(22px,2.1vw,34px);letter-spacing:0}
+:lang(en) .journal-notes h3{font-size:clamp(16px,1.5vw,22px);letter-spacing:0}
+:lang(en) .journal-notes p{line-height:1.6;letter-spacing:0}
+:lang(ko) .paper-goal,:lang(ja) .paper-goal{font-size:clamp(18px,1.65vw,26px);line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+:lang(ko) .paper-primary,:lang(ja) .paper-primary{font-size:clamp(17px,1.65vw,25px);white-space:normal;line-height:1.3}
+:lang(ko) .journal-notes p{word-break:keep-all;overflow-wrap:anywhere}
+:lang(en) .tool-list>button{font-size:16px;letter-spacing:0}
+@media(max-width:900px){:lang(en) .paper-goal{font-size:19px}:lang(en) .paper-primary{font-size:19px;min-height:53px}:lang(en) .paper-context h3{font-size:24px}:lang(en) .chapter-kicker{font-size:13px}:lang(en) .folded-heading h1{font-size:18px}:lang(en) .journal-notes p{font-size:12px;line-height:1.6}:lang(en) .journal-cta{font-size:15px}:lang(ko) .paper-goal,:lang(ja) .paper-goal{font-size:20px}.language-picker{margin-top:8px}.language-picker button{min-height:37px}}
+:lang(en) .journal h2,:lang(en) .journal h3{font-family:Georgia,'Times New Roman',serif}
+:lang(ja) .journal h2,:lang(ja) .journal h3{font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP',serif}
+:lang(ko) .journal h2,:lang(ko) .journal h3{font-family:'AppleMyungjo','Batang','Noto Serif CJK KR',serif}
+:lang(en) .paper-goal.compact-goal,:lang(ja) .paper-goal.compact-goal,:lang(ko) .paper-goal.compact-goal{white-space:normal}
+:lang(en) .paper-stats>span{white-space:normal;font-size:18px;line-height:1.3}
+:lang(en) .topology-paper .paper-stats>span{font-size:23px;white-space:nowrap}
+:lang(en) .paper-tab span{writing-mode:vertical-rl;letter-spacing:.05em}
+:lang(ko) .paper-tab span{letter-spacing:0}
+@media(max-width:900px){:lang(en) .paper-stats>span{font-size:15px}:lang(en) .topology-paper .paper-stats>span{font-size:17px}}
+.language-picker button[aria-pressed=true]{background:#47776e!important;color:#fff6dc!important;border-color:#a88b50!important}
+/* Translation length must never push content outside the book's page. */
+.journal-right{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#af946d80 transparent;padding-right:8px}
+.journal-right>.journal-page-heading,.journal-right>.journal-cta,.journal-right>.journal-source,.journal-right>.journal-text-button{flex-shrink:0}
+.journal-principle .journal-notes{flex:1 1 auto;min-height:0;overflow-y:auto;justify-content:flex-start;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#af946d80 transparent}
+.journal-principle .journal-note{flex-shrink:0}
+:lang(en) .journal-caption p,:lang(ja) .journal-caption p,:lang(ko) .journal-caption p{white-space:normal;letter-spacing:.03em;font-size:clamp(17px,1.7vw,24px)}
+:lang(en) .journal-page-heading h2,:lang(ja) .journal-page-heading h2,:lang(ko) .journal-page-heading h2{white-space:normal}
+@media(max-width:680px){.journal-right{overflow:visible;padding-right:0}.journal-principle .journal-notes{overflow:visible;flex:initial}.journal-principle .journal-note{flex-shrink:initial}}
+:lang(ko) .paper-bottom span{word-break:keep-all}
+@media(max-width:680px){.language-picker button{min-height:44px}.tool-view-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px 36px;gap:5px}.tool-view-row button{min-width:0;min-height:40px;padding:6px;font-size:12px;gap:4px;justify-content:center}}
+@media(max-width:680px){.journal-backdrop{overflow:hidden}.journal{max-height:calc(100dvh - 40px)}}
+@media(max-width:680px){.game-shell .journal-backdrop{overflow:hidden}.game-shell .journal{max-height:calc(100dvh - 40px)}.game-shell .tool-view-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px 36px;gap:5px}.game-shell .tool-view-row button{min-width:0;min-height:40px;padding:6px;font-size:12px;gap:4px;justify-content:center}}
