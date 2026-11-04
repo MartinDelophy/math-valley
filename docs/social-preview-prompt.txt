@@ -1,0 +1,14 @@
+Built-in ImageGen; source reference: an actual Math Valley gameplay capture.
+Final export: 1280 x 640 JPEG for GitHub social preview and website Open Graph.
+
+Use case: compositing.
+Asset type: GitHub repository social preview / social sharing cover.
+Edit the attached Math Valley gameplay screenshot into an original polished promotional cover. Output exactly 1280 x 640 pixels, 2:1 landscape, opaque background.
+Reference role: the attached screenshot is the existing game's architecture, traveler, materials and color identity. Preserve these recognizable subjects. Remove every game-interface element, journal, menu, compass, level heading, button and status label. Recompose for a cover rather than a screenshot.
+Composition: deep quiet aubergine-purple background, subtle atmospheric shadow. Left 43% is generous clean space for elegant typography. Right 57% features a beautifully lit miniature hollow ring tower inspired directly by the screenshot: two broad concentric annular ceramic cloisters, a deep empty central well, ivory/blush archways and slender pillars, subtle teal path inlays, a tiny teal-roofed sanctuary, small brushed-gold astrolabe mechanisms, and exactly one small mustard-gold traveler. Architecture large and tactile, fully contained, with soft realistic ambient shadows. Keep the warm porcelain and muted teal/gold aesthetic; refine the render but do not substitute unrelated architecture.
+Typography: warm ivory, high-contrast elegant serif display title, careful professional kerning, very readable at thumbnail size. Chinese secondary title in a matching refined Chinese serif, smaller clean subtitle, restrained gold details. Use only the exact text below, no extra badges or claims:
+"Math Valley"
+"数学漫游"
+"Explore mathematics in 3D"
+"math-valley.vercel.app"
+Keep all text and important objects within a 64-pixel safe margin. Calm premium mathematical adventure mood. Avoid browser chrome, UI panels, excessive equations, neon, watermarks, extra characters, logos from other games, and generic software-dashboard imagery. The final must work as a striking self-contained GitHub sharing card.
