@@ -14,7 +14,7 @@
 
 序章に加え、第1章「橋と連結」は16ステージ、第2章「回環の塔」は12ステージ。全域木、非交差経路、フローからホモトピー・被覆空間まで扱います。大学数学の基礎を持つ学習者を想定しています。
 
-[macOS / Windows デスクトップ版をダウンロード](https://github.com/MartinDelophy/math-valley/releases)。オフラインで全4言語・ローカルセーブに対応。Apple Silicon / Intel Mac は DMG・ZIP、Windows はインストーラー・ポータブル EXE。初回ベータは Apple 公証・Windows 発行元署名がありません。ウェブとは別のセーブです。[詳細](docs/desktop.md)。
+[macOS / Windows デスクトップ版をダウンロード](https://github.com/MartinDelophy/math-valley/releases)。オフラインで全9言語・ローカルセーブに対応。Apple Silicon Mac は DMG・ZIP、Windows はインストーラー・ポータブル EXE。初回ベータは Apple 公証・Windows 発行元署名がありません。ウェブとは別のセーブです。[詳細](docs/desktop.md)。
 
 Node.js 20+ とnpmを用意し、プロジェクト直下で実行してください。
 
