@@ -46,6 +46,8 @@ On macOS, after building, you can also double-click `开始数学漫游.command`
 
 ## Controls
 
+First-time visitors begin with a 3D demonstration, then repeat the actions in a small independent practice scene. New mechanics introduce their own examples when first encountered, including proof stages. Lessons can be paused, skipped or replayed through **Journey menu → Guided demonstration**. They support all four languages and preserve the current puzzle's state and action budget. See [teaching notes](docs/teaching.md).
+
 | Action | Control |
 | --- | --- |
 | Rotate camera | Drag the scene, or Q / E |

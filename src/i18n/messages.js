@@ -1,5 +1,7 @@
 // Source-language keys; columns: zh-CN, en, ja, ko.
+import {teachingMessages} from './teaching.js';
 export const messages=[
+ ...teachingMessages,
  [
   "数学漫游 · 序章",
   "Math Valley · Prologue",

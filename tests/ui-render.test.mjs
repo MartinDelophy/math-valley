@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {createServer} from 'vite';
-let server,Journal,FoldedHud,setLocale,levels;
+let server,Journal,FoldedHud,TeachingTour,lessons,setLocale,levels;
 before(async()=>{
  globalThis.document={documentElement:{lang:'zh-CN'}};
  globalThis.localStorage={getItem:()=>null,setItem:()=>{}};
@@ -12,8 +12,17 @@ before(async()=>{
  ({FoldedHud}=await server.ssrLoadModule('/src/FoldedHud.jsx'));
  ({setLocale}=await server.ssrLoadModule('/src/i18n/react.jsx'));
  ({LEVELS:levels}=await server.ssrLoadModule('/src/catalog.js'));
+ ({TeachingTour}=await server.ssrLoadModule('/src/teaching/TeachingTour.jsx'));
+ ({LESSONS:lessons}=await server.ssrLoadModule('/src/teaching/lessons.js'));
 });
 after(async()=>{await server?.close();delete globalThis.document;delete globalThis.localStorage;});
+for(const language of ['zh-CN','en','ja','ko'])test(`${language}: teaching scenes have accessible, translated welcome and skip controls`,()=>{
+ setLocale(language);for(const lessonKey of Object.keys(lessons)){
+  const html=renderToStaticMarkup(React.createElement(TeachingTour,{lessonKey,onFinish:()=>{}}));
+  assert(html.includes('role="dialog"'));assert(html.includes('aria-modal="true"'));assert(html.includes('teaching-primary'));assert(html.includes('teaching-progress'));
+  if(language==='en'||language==='ko')assert(!/[\u3400-\u9fff]/.test(html.replaceAll('中文','').replaceAll('日本語','')),`${language}/${lessonKey}`);
+ }
+});
 for(const language of ['zh-CN','en','ja','ko'])test(`${language}: all chapter dialogs render with localized principles and no raw source text`,()=>{
  setLocale(language);for(let index=-1;index<levels.length;index++)for(const kind of ['tools','menu','principle','hint','success']){
  const html=renderToStaticMarkup(React.createElement(Journal,{kind,levelIndex:index,phase:0,completed:[],feedback:'行走与同伦证据均已验证。'}));
