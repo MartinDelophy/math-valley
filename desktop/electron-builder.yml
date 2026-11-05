@@ -1,0 +1,46 @@
+appId: io.github.martindelophy.mathvalley
+productName: Math Valley
+asar: true
+npmRebuild: false
+directories:
+  output: ../release
+  buildResources: build
+files:
+  - main.cjs
+  - protocol.cjs
+  - smoke.cjs
+  - package.json
+extraResources:
+  - from: ../dist/client
+    to: web
+    filter:
+      - '**/*'
+      - '!design/**/*'
+artifactName: Math-Valley-${version}-${os}-${arch}.${ext}
+mac:
+  category: public.app-category.education
+  icon: build/icon.icns
+  identity: '-'
+  notarize: false
+  hardenedRuntime: false
+  target:
+    - dmg
+    - zip
+dmg:
+  title: Math Valley
+win:
+  icon: build/icon.ico
+  target:
+    - nsis
+    - portable
+nsis:
+  artifactName: Math-Valley-${version}-windows-${arch}-setup.${ext}
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Math Valley
+  deleteAppDataOnUninstall: false
+portable:
+  artifactName: Math-Valley-${version}-windows-${arch}-portable.${ext}

@@ -14,6 +14,8 @@
 
 프롤로그와 함께 1장 ‘다리와 연결’ 16단계, 2장 ‘순환의 탑’ 12단계가 있습니다. 신장 트리, 서로소 경로, 유량부터 호모토피와 피복 공간까지 다룹니다. 대학 수학의 기초가 있는 학습자를 대상으로 합니다.
 
+[macOS / Windows 데스크톱 버전 다운로드](https://github.com/MartinDelophy/math-valley/releases). 오프라인에서 네 언어와 기기 내 저장을 지원해요. Apple Silicon / Intel Mac용 DMG·ZIP, Windows 설치형·포터블 EXE. 첫 베타에는 Apple 공증과 Windows 게시자 서명이 없으며 웹과 저장 기록이 별개예요. [자세히](docs/desktop.md).
+
 Node.js 20+와 npm을 준비한 뒤 프로젝트 폴더에서 실행하세요.
 
 ```sh

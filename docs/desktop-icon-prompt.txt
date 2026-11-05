@@ -1,0 +1,3 @@
+Built-in ImageGen. Reference: docs/screenshots/gameplay-en.png (style and subject reference).
+Create one square Math Valley app icon. Full opaque plum background #35264f; simplified ivory ceramic looping gallery and a tiny teal-roof house, gold doorway accents. Warm soft studio light, three-quarter isometric view, readable substantial silhouette. Architecture occupies about 72% of canvas. No words, equations, letters, numbers, captions, device mockups or Electron logo. Corners remain fully opaque for OS masking.
+Export: generated image normalized to 1024x1024 PNG; ICO sizes 16–256 and ICNS 16–1024. Only resizing/encoding was applied.

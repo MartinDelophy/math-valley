@@ -16,6 +16,11 @@ A playable 3D mathematics journey. Rotate miniature architecture, traverse layer
 
 [Play online](https://math-valley.vercel.app/) · [Report an issue](https://github.com/MartinDelophy/math-valley/issues)
 
+## Desktop app
+
+[Download for macOS and Windows](https://github.com/MartinDelophy/math-valley/releases) — offline packages, the same four-language game, and persistent local saves. Apple Silicon / Intel DMG and ZIP, Windows installer and portable EXE are available through the desktop beta release workflow. The beta is not Apple-notarized or Windows publisher-signed; desktop and browser saves are independent. See [desktop build and release notes](docs/desktop.md).
+
+
 ## What you can play
 
 - **Prologue — Direction & rotation:** an introduction to rotating and walking through the world.

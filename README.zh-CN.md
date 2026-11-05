@@ -20,6 +20,11 @@
 
 面向已有大学数学基础的学习者。原理手记、观察提示和独立证明均融入关卡；部分关卡需要同时完成行走与证据验证。
 
+## 桌面版
+
+[下载 macOS / Windows 桌面版](https://github.com/MartinDelophy/math-valley/releases)。游戏资源随应用提供，可离线游玩，保留四种语言和本机存档。提供 Apple Silicon / Intel Mac 的 DMG 与 ZIP，以及 Windows 安装版和便携版 EXE。首个测试版尚未进行 Apple 公证或 Windows 发布者签名；桌面存档与网站存档相互独立。详见[桌面构建与发布说明](docs/desktop.md)。
+
+
 ## 运行
 
 准备 Node.js 20+、npm 和支持 WebGL 的浏览器。

@@ -12,3 +12,7 @@ work/
 # Machine-local hosting linkage and deployment output.
 .netlify/
 .vercel/
+
+# Desktop packages and isolated runtime smoke profiles.
+release/
+desktop/.smoke/

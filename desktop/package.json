@@ -1,0 +1,21 @@
+{
+  "name": "math-valley-desktop",
+  "productName": "Math Valley",
+  "version": "0.1.0-beta.1",
+  "description": "A 3D mathematics puzzle journey through graphs and covering spaces.",
+  "author": "MartinDelophy",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:win": "electron-builder --win --x64 --publish never",
+    "test": "node --test tests/*.test.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "electron-builder": "26.18.0"
+  }
+}

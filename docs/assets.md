@@ -7,3 +7,5 @@
 - The subset Noto Serif SC fonts are distributed with their font license at `public/assets/FONT-LICENSE.txt`.
 - Interface icons use `@phosphor-icons/react`. React, Three.js, Vite and other packages retain their respective dependency licenses.
 - The miniature architecture is inspired by spatial puzzle games. This project does not include assets from Monument Valley and is not affiliated with its creators.
+
+- The desktop icon in `desktop/build/` was generated with built-in ImageGen using the actual game screenshot as a style reference. PNG, ICNS and ICO export the same image. Prompt: [desktop-icon-prompt.txt](desktop-icon-prompt.txt).
