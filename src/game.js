@@ -1,3 +1,4 @@
+import {settings} from './settings/store';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {introCheckpoint,restoreIntro} from './storage/checkpoints.js';
@@ -230,6 +231,7 @@ export function createGame(container, callbacks) {
   let audio;let handleDrag=null;let pausedAt=0;
   function chime(success=false) {
     try{
+      if(!settings.get().soundEffects)return;
       audio??=new (window.AudioContext||window.webkitAudioContext)();
       if(audio.state==='suspended')audio.resume();
       const now=audio.currentTime;

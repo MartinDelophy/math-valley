@@ -1,6 +1,6 @@
 # Desktop builds
 
-Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The four languages, teaching examples, 28 puzzles and local journey backups are shared with the web version. The opening rotates slowly, can be paused, and pushes the camera into the cloister before revealing a resumed game. Reduced-motion settings stop idle rotation and use a brief dissolve.
+Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The nine languages, teaching examples, 28 puzzles and local journey backups are shared with the web version. The opening rotates slowly, can be paused, and pushes the camera into the cloister before revealing a resumed game. Reduced-motion settings stop idle rotation and use a brief dissolve.
 
 ## Downloads
 
@@ -56,3 +56,7 @@ On macOS, pass `--arm64` or `--x64` directly to the desktop builder when selecti
 A `v<desktop/package.json version>` tag triggers this workflow. It can also run manually; choose **Create a draft** to assemble a draft with the matching version tag after validation. The tag is created at the exact workflow commit and never moved. Existing published releases are never overwritten. Publishing a draft is a separate final step.
 
 To make a new version, update `desktop/package.json` and its lockfile, commit, and run the workflow. The desktop semver is independent of the web package's private development version. Keep app ID, product name, profile directory and scheme stable to retain local saves. Future signing/notarization can be added to the native jobs without changing the game renderer or its data format.
+
+## Language and audio settings
+
+A shared gear menu controls nine languages, music, spoken guidance, sound effects and opening animation. Preferences are saved in IndexedDB. The bundled piano recording is Bach BWV 846, performed by Kimiko Ishizaka and released under CC0; source and license are in `public/audio/LICENSE.txt`. Music starts after a user interaction, pauses in the background and ducks during narration. Spoken guidance uses matching device voices through the Web Speech API. Available languages and voices vary by system; the settings panel reports when a matching voice is absent instead of reading with another language. Additional European translations are a machine-assisted first edition with mathematical terminology corrections; further native-language proofreading is welcome.

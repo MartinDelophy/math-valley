@@ -1,9 +1,10 @@
+import {isLocale} from '../i18n/languages.js';
+import {cleanPreferences} from '../settings/model.js';
 export const DATABASE_NAME='math-valley';
 export const DATABASE_VERSION=2;
 export const FALLBACK_KEY='math-valley-local-v1';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
-const locales=['zh-CN','en','ja','ko'];
 const generation=value=>value?.journeyId||'original';
 const stores=['profile','levels','archives'];
 export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=DATABASE_NAME,now=Date.now,openTimeout=3000}={}){
@@ -14,7 +15,7 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
  const defaults=()=>({schemaVersion:1,journeyId:'original',startedAt:0,currentLevel:'intro',completed:[],locale:'zh-CN',lessons:{},preferences:{},updatedAt:0});
  function sanitize(value){
   const p=object(value)?value:{};
-  return {...defaults(),journeyId:typeof p.journeyId==='string'&&p.journeyId.length<100?p.journeyId:'original',startedAt:Number.isFinite(p.startedAt)?p.startedAt:0,currentLevel:ids.has(p.currentLevel)?p.currentLevel:'intro',completed:[...new Set(Array.isArray(p.completed)?p.completed.filter(id=>ids.has(id)):[])],locale:locales.includes(p.locale)?p.locale:'zh-CN',lessons:Object.fromEntries(Object.entries(object(p.lessons)?p.lessons:{}).filter(([key,v])=>/^[a-z]+$/.test(key)&&['completed','skipped'].includes(v))),preferences:Object.fromEntries(['labels','paperOpen'].filter(key=>typeof p.preferences?.[key]==='boolean').map(key=>[key,p.preferences[key]])),updatedAt:Number.isFinite(p.updatedAt)?p.updatedAt:0};
+  return {...defaults(),journeyId:typeof p.journeyId==='string'&&p.journeyId.length<100?p.journeyId:'original',startedAt:Number.isFinite(p.startedAt)?p.startedAt:0,currentLevel:ids.has(p.currentLevel)?p.currentLevel:'intro',completed:[...new Set(Array.isArray(p.completed)?p.completed.filter(id=>ids.has(id)):[])],locale:isLocale(p.locale)?p.locale:'zh-CN',lessons:Object.fromEntries(Object.entries(object(p.lessons)?p.lessons:{}).filter(([key,v])=>/^[a-z]+$/.test(key)&&['completed','skipped'].includes(v))),preferences:cleanPreferences(p.preferences),updatedAt:Number.isFinite(p.updatedAt)?p.updatedAt:0};
  }
  let profile=defaults();
  function readLocal(key){try{return JSON.parse(localStorage?.getItem(key)||'null');}catch{return null;}}

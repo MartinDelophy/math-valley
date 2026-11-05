@@ -8,3 +8,5 @@
 @media(prefers-reduced-motion:reduce){.teaching-overlay *{scroll-behavior:auto}}
 .teaching-pin.teaching-edge{border-radius:8px;padding:5px 9px;white-space:nowrap;font-size:11px;height:auto;min-height:26px;background:#f3e8d6eb}.teaching-edge.is-selected{border-color:#4d8e7e;box-shadow:0 0 0 3px #75b6a840;color:#285b51;opacity:1}
 @media(max-width:680px){.teaching-paper{flex:none;min-height:0}.teaching-content{min-height:0}}
+
+.teaching-heading .teaching-settings-global{margin-left:8px;width:44px;height:44px;min-width:44px;min-height:44px;color:#d6be91}.teaching-heading>span{min-width:0}.teaching-heading>span small{white-space:normal}.teaching-heading{max-width:calc(100% - var(--teaching-paper) - 50px)}@media(max-width:680px){.teaching-heading{max-width:calc(100% - 36px)}.teaching-heading .teaching-settings-global{margin-left:5px}}

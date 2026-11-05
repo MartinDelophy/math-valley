@@ -9,6 +9,7 @@ files:
   - main.cjs
   - protocol.cjs
   - smoke.cjs
+  - review.cjs
   - package.json
 extraResources:
   - from: ../dist/client

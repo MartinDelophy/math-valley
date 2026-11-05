@@ -10,7 +10,7 @@
 
 A playable 3D mathematics journey. Rotate miniature architecture, traverse layered galleries, build mathematical objects, and submit evidence for your solution.
 
-**中文 · English · 日本語 · 한국어** — change language on the title screen or in **Journey menu → Language**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
+**简体中文 · 繁體中文 · English · 日本語 · 한국어 · Français · Deutsch · Español · Português** — use the gear button on the title screen or **Journey menu → Settings**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
 
 ![Math Valley gameplay](docs/screenshots/gameplay-en.png)
 
@@ -18,7 +18,7 @@ A playable 3D mathematics journey. Rotate miniature architecture, traverse layer
 
 ## Desktop app
 
-[Download for macOS and Windows](https://github.com/MartinDelophy/math-valley/releases) — offline packages, the same four-language game, and persistent local saves. Apple Silicon / Intel DMG and ZIP, Windows installer and portable EXE are available through the desktop beta release workflow. The beta is not Apple-notarized or Windows publisher-signed; desktop and browser saves are independent. See [desktop build and release notes](docs/desktop.md).
+[Download for macOS and Windows](https://github.com/MartinDelophy/math-valley/releases) — offline packages, the same nine-language game, and persistent local saves. Apple Silicon / Intel DMG and ZIP, Windows installer and portable EXE are available through the desktop beta release workflow. The beta is not Apple-notarized or Windows publisher-signed; desktop and browser saves are independent. See [desktop build and release notes](docs/desktop.md).
 
 
 ## What you can play
@@ -51,7 +51,7 @@ On macOS, after building, you can also double-click `开始数学漫游.command`
 
 ## Controls
 
-First-time visitors begin with a 3D demonstration, then repeat the actions in a small independent practice scene. New mechanics introduce their own examples when first encountered, including proof stages. Lessons can be paused, skipped or replayed through **Journey menu → Guided demonstration**. They support all four languages and preserve the current puzzle's state and action budget. See [teaching notes](docs/teaching.md).
+First-time visitors begin with a 3D demonstration, then repeat the actions in a small independent practice scene. New mechanics introduce their own examples when first encountered, including proof stages. Lessons can be paused, skipped or replayed through **Journey menu → Guided demonstration**. They support all nine languages and preserve the current puzzle's state and action budget. See [teaching notes](docs/teaching.md).
 
 | Action | Control |
 | --- | --- |
@@ -98,11 +98,11 @@ npm run build
 npm test
 ```
 
-The checks cover authored puzzle solvability, graph and topology rules, covering permutations, proof constraints, translation completeness and parameter preservation, dialog/HUD rendering across all four languages, and static packaging. A GitHub Actions workflow runs the build and tests.
+The checks cover authored puzzle solvability, graph and topology rules, covering permutations, proof constraints, translation completeness and parameter preservation, dialog/HUD rendering across all nine languages, and static packaging. A GitHub Actions workflow runs the build and tests.
 
 - `src/chapter/` — graph-theory chapter and shared Three.js stage.
 - `src/topology/` — covering-space levels, pure mathematics and geometry.
-- `src/i18n/` — four-language message catalog, runtime and layout rules.
+- `src/i18n/` — nine-language message catalog, runtime and layout rules.
 - `tests/` — mathematical, localization, render and packaging checks.
 - `docs/` — screenshots and contributor notes.
 

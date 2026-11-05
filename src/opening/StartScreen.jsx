@@ -1,6 +1,9 @@
 import {useEffect,useRef,useState} from 'react';
 import {ArrowRight,ArrowCounterClockwise,Compass,X,Check,BookmarkSimple,Pause,Play} from '@phosphor-icons/react';
-import {t,useLocale,LanguagePicker} from '../i18n/react';
+import {t,useLocale} from '../i18n/react';
+import {SettingsButton,useSettingsPanel} from '../settings/Settings';
+import {useSettings} from '../settings/store';
+import {FitText} from '../FitText';
 import {LEVELS} from '../catalog';
 import {createOpeningScene} from './scene';
 import './opening.css';
@@ -26,6 +29,7 @@ export function OpeningPanel({kind,archives=[],busy,error,onCancel,onNew,onResto
  </section></div>;
 }
 export function StartScreen({profile,hasJourney,archives=[],isStale=false,onContinue,onNew,onRestore,onEntered}){
+ const {isOpen:settingsOpen}=useSettingsPanel(),preferences=useSettings();
  const locale=useLocale(),host=useRef(),root=useRef(),scene=useRef(),mounted=useRef(false),locked=useRef(false),[paused,setPaused]=useState(false),[reduced,setReduced]=useState(()=>typeof window!=='undefined'&&Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)),[departing,setDeparting]=useState(false),[panel,setPanel]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[sceneError,setSceneError]=useState(false);
  const display=useRef({profile,hasJourney});
  if(!busy)display.current={profile,hasJourney};
@@ -37,7 +41,7 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
  },[]);
  useEffect(()=>{const query=window.matchMedia?.('(prefers-reduced-motion: reduce)');const change=()=>setReduced(Boolean(query?.matches));query?.addEventListener('change',change);return()=>query?.removeEventListener('change',change);},[]);
  useEffect(()=>{scene.current?.reduce(reduced);},[reduced]);
- useEffect(()=>{scene.current?.pause(paused||Boolean(panel)||busy);},[paused,panel,busy]);
+ useEffect(()=>{scene.current?.pause(paused||!preferences.openingMotion||Boolean(panel)||busy||settingsOpen);},[paused,panel,busy,settingsOpen,preferences.openingMotion]);
  useEffect(()=>{document.title=`Math Valley · ${t('旅程的起点')}`;},[locale]);
  async function begin(action){
   if(locked.current)return;locked.current=true;setBusy(true);setError('');
@@ -64,15 +68,15 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
     <div className="opening-entry">
      {hasJourney&&<div className="opening-last"><BookmarkSimple className="opening-bookmark" weight="fill"/><div><p className="opening-chapter">{chapter}</p>{current&&<p className="opening-level">{current.displayId||current.id} {t(current.title)}</p>}<small><Check size={19}/>{t(`已完成 ${done} / ${LEVELS.length} 关`)}</small></div></div>}
      {isStale?<><p className="opening-error" role="alert">{t('另一个页面已切换旅程，请刷新后继续。')}</p><button className="opening-plate" onClick={()=>location.reload()}>{t('刷新旅程')}<ArrowCounterClockwise size={19}/></button></>:<>
-      <button className="opening-plate opening-primary" disabled={busy} onClick={()=>begin(hasJourney?onContinue:onNew)}>{t(busy?'正在进入…':hasJourney?'继续旅程':'开始旅程')}</button>
+      <button className="opening-plate opening-primary" disabled={busy} onClick={()=>begin(hasJourney?onContinue:onNew)}><FitText>{t(busy?'正在进入…':hasJourney?'继续旅程':'开始旅程')}</FitText></button>
       {hasJourney&&<button className="opening-new" disabled={busy} onClick={()=>{setError('');setPanel('new');}}><ArrowCounterClockwise size={17}/>{t('开始新旅程')}</button>}
       {!hasJourney&&<p className="opening-first">{t('从序章出发，先观察，再亲手验证。')}</p>}
      </>}
      {error&&<p className="opening-error" role="alert">{t(error)}</p>}
     </div>
-    <footer className="opening-footer"><LanguagePicker/></footer>
+    <footer className="opening-footer"><SettingsButton disabled={busy} withLabel/></footer>
    </div>
-   <div className="opening-utilities">{!reduced&&<button className="opening-motion" aria-label={t(paused?'播放开场动画':'暂停开场动画')} title={t(paused?'播放开场动画':'暂停开场动画')} disabled={busy} onClick={()=>setPaused(value=>!value)}>{paused?<Play size={19}/>:<Pause size={19}/>}</button>}<button className="opening-history" disabled={busy} onClick={()=>{setError('');setPanel('archives');}}>{t('往昔旅程')}<ArrowRight size={22}/></button></div>
+   <div className="opening-utilities">{!reduced&&preferences.openingMotion&&<button className="opening-motion" aria-label={t(paused?'播放开场动画':'暂停开场动画')} title={t(paused?'播放开场动画':'暂停开场动画')} disabled={busy} onClick={()=>setPaused(value=>!value)}>{paused?<Play size={19}/>:<Pause size={19}/>}</button>}<button className="opening-history" disabled={busy} onClick={()=>{setError('');setPanel('archives');}}>{t('往昔旅程')}<ArrowRight size={22}/></button></div>
   </div>
   {departing&&<span className="opening-status" role="status">{t('正在进入旅程…')}</span>}
   {panel&&<OpeningPanel kind={panel} archives={archives} busy={busy} error={error} onCancel={()=>{setError('');setPanel(null);}} onNew={()=>begin(onNew)} onRestore={id=>begin(()=>onRestore(id))}/>}

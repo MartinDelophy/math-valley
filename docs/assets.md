@@ -9,3 +9,7 @@
 - The miniature architecture is inspired by spatial puzzle games. This project does not include assets from Monument Valley and is not affiliated with its creators.
 
 - The desktop icon in `desktop/build/` was generated with built-in ImageGen using the actual game screenshot as a style reference. PNG, ICNS and ICO export the same image. Prompt: [desktop-icon-prompt.txt](desktop-icon-prompt.txt).
+
+## Classical piano
+
+- `public/audio/bach-prelude-bwv846.mp3` — J. S. Bach, Prelude No. 1 in C major BWV 846, piano by Kimiko Ishizaka (2015), Open Well-Tempered Clavier. Complete CC0 recording, transcoded from the original Ogg to MP3 with FFmpeg. Source and CC0 terms: `public/audio/LICENSE.txt`. Bundled locally for web and desktop playback.

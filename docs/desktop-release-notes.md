@@ -1,4 +1,4 @@
-First Math Valley desktop beta: the same 28 mathematical puzzles, four languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
+First Math Valley desktop beta: the same 28 mathematical puzzles, nine languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
 
 下载 / Downloads:
 - **macOS 13+ Apple Silicon (M1/M2/M3/M4 and later):** `mac-arm64.dmg`
@@ -13,4 +13,6 @@ First Math Valley desktop beta: the same 28 mathematical puzzles, four languages
 
 Animated opening included: slow architectural rotation with Pause/Play, a camera push into the cloister, and a dissolve into the saved puzzle. Reduced-motion settings use a brief dissolve instead. Native integration tests verified the saved layer, energy and camera after restarting the app.
 
-Validation: 116 game tests and 3 desktop protocol tests. Packaged macOS ARM64 and Windows x64 pass native integration checks; the macOS Intel executable is tested through Rosetta on Apple Silicon, not on physical Intel hardware.
+Validation: 141 game tests and 3 desktop protocol tests. Packaged macOS ARM64 and Windows x64 pass native integration checks; the macOS Intel executable is tested through Rosetta on Apple Silicon, not on physical Intel hardware.
+
+Language & sound settings: 简体中文, 繁體中文, English, 日本語, 한국어, Français, Deutsch, Español, Português. A gear menu controls language, piano BGM, device-voice guidance, volume, effects and opening motion. Long translated labels fit their button plates. Music is the complete CC0 Bach BWV 846 recording performed by Kimiko Ishizaka. Speech availability depends on installed device voices; new European translations are an initial machine-assisted edition with terminology corrections.

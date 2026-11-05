@@ -16,14 +16,15 @@ async function run({registerContent,createWindow}) {
  console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged}, arch=${process.arch})`);
  if(process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH)assert.equal(process.arch,process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH);
  let win;const errors=[],failed=[];
- const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},90000);
+ const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},phase==='review'?240000:90000);
  try{
   await app.whenReady();registerContent();
   win=createWindow({show:process.env.CI==='true',backgroundThrottling:false,width:1672,height:941,testViewport:true});
   win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
-  win.webContents.session.webRequest.onErrorOccurred(details=>failed.push({url:details.url,error:details.error}));
+  win.webContents.session.webRequest.onErrorOccurred(details=>{if(details.error==='net::ERR_ABORTED'&&details.url.endsWith('/audio/bach-prelude-bwv846.mp3'))return;failed.push({url:details.url,error:details.error});});
   await once(win.webContents,'did-finish-load');
   await waitFor(win,"Boolean(document.querySelector('.opening-primary') && document.querySelector('canvas')?.width)");
+  if(phase==='review'){await fs.mkdir(output,{recursive:true});await require('./review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   const animated=await win.webContents.executeJavaScript("Boolean(document.querySelector('.opening-motion'))");
   const runtime=await win.webContents.executeJavaScript("({origin:location.origin,secure:isSecureContext,require:typeof require,process:typeof process,webgl:Boolean(document.querySelector('canvas').getContext('webgl2'))})");
   assert.equal(runtime.origin,'math-valley://app');assert.equal(runtime.secure,true);assert.equal(runtime.require,'undefined');assert.equal(runtime.process,'undefined');assert.equal(runtime.webgl,true);
@@ -43,10 +44,18 @@ async function run({registerContent,createWindow}) {
     const still=await win.webContents.capturePage();await new Promise(resolve=>setTimeout(resolve,500));assert((await win.webContents.capturePage()).toPNG().equals(still.toPNG()),'The pause control did not stop rotation');
     await win.webContents.executeJavaScript("document.querySelector('.opening-motion').click()");
    }
-   for(const locale of ['en','ja','ko','zh-CN']){await win.webContents.executeJavaScript(`document.querySelector('.language-picker button[lang="${locale}"]').click()`);await waitFor(win,`document.documentElement.lang==="${locale}"`);}
+   await win.webContents.executeJavaScript("document.querySelector('.opening-footer .settings-trigger').click()");
+   await waitFor(win,"Boolean(document.querySelector('.settings-dialog'))");
+   // Audio interaction is checked separately on hardware; keep cloud CI silent.
+   await win.webContents.executeJavaScript("for(const key of ['music','narration']){const b=document.querySelector('[aria-labelledby=\"setting-'+key+'\"]');if(b.getAttribute('aria-checked')==='true')b.click();}");
+   for(const locale of ['en','fr','de','es','pt-BR','zh-TW','ja','ko','zh-CN']){await win.webContents.executeJavaScript(`document.querySelector('.language-picker button[lang="${locale}"]').click()`);await waitFor(win,`document.documentElement.lang==="${locale}"`);}
+   await win.webContents.executeJavaScript("document.querySelector('.settings-close').click()");
+   await waitFor(win,"!document.querySelector('.settings-dialog')");
+   const labelFits=await win.webContents.executeJavaScript("(()=>{const el=document.querySelector('.fit-label');return el.scrollWidth<=el.clientWidth+1&&el.getBoundingClientRect().height<document.querySelector('.opening-primary').clientHeight;})()");assert(labelFits,'Opening label overflowed its plate');
    await win.webContents.executeJavaScript("document.querySelector('.opening-primary').click()");
    if(animated){await waitFor(win,"Boolean(document.querySelector('.is-departing'))");await new Promise(resolve=>setTimeout(resolve,650));await fs.writeFile(path.join(output,'desktop-entry.png'),(await win.webContents.capturePage()).toPNG());}
    await waitFor(win,"Boolean(document.querySelector('.teaching-tour') || document.querySelector('[aria-labelledby=\"teaching-title\"]'))");
+   await fs.writeFile(path.join(output,'desktop-teaching.png'),(await win.webContents.capturePage()).toPNG());
    await win.webContents.executeJavaScript("[...document.querySelectorAll('button')].find(button=>button.textContent==='回到开场').click()");
    await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
    // Isolated profile fixture matching the approved returning-player mock.

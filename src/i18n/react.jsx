@@ -9,9 +9,9 @@ if(import.meta.hot)import.meta.hot.data.localeStore=store;
 export const t=value=>translate(value,store.locale);
 export function setLocale(value){
  if(!isLocale(value)||value===store.locale)return;
- store.locale=value;saves.saveProfile({locale:value});
- document.documentElement.lang=value;for(const listener of store.listeners)listener();
+ store.locale=value;try{localStorage.setItem(localeKey,value);}catch{}saves.saveProfile({locale:value});
+ document.documentElement.lang=value;document.documentElement.dataset.script=LANGUAGES.find(l=>l.id===value)?.family;for(const listener of store.listeners)listener();
 }
 export function useLocale(){return useSyncExternalStore(listener=>{store.listeners.add(listener);return()=>store.listeners.delete(listener);},()=>store.locale,()=>store.locale);}
 export function LanguagePicker(){const current=useLocale();return <fieldset className="language-picker"><legend>{t('语言')}</legend><div>{LANGUAGES.map(language=><button key={language.id} lang={language.id} aria-pressed={current===language.id} onClick={()=>setLocale(language.id)}>{language.label}</button>)}</div></fieldset>;}
-document.documentElement.lang=store.locale;
+document.documentElement.lang=store.locale;document.documentElement.dataset.script=LANGUAGES.find(l=>l.id===store.locale)?.family;

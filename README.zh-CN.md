@@ -10,7 +10,7 @@
 
 通过立体空间解谜学习数学的本地网页游戏。旋转视角、探索多层建筑、操作机关，再用数学构造和证明完成关卡。
 
-支持 **简体中文、英文、日文、韩文**。在开场页，或左上角「旅途菜单 → 语言」切换；当前层数、路径、印记和行动余量会保留，语言偏好自动保存。
+支持 **简体中文、英文、日文、韩文**。在开场页，或左上角「旅途菜单 → 设置」切换；当前层数、路径、印记和行动余量会保留，语言偏好自动保存。
 
 ![四语言切换](docs/screenshots/languages.png)
 
@@ -22,7 +22,7 @@
 
 ## 桌面版
 
-[下载 macOS / Windows 桌面版](https://github.com/MartinDelophy/math-valley/releases)。游戏资源随应用提供，可离线游玩，保留四种语言和本机存档。提供 Apple Silicon / Intel Mac 的 DMG 与 ZIP，以及 Windows 安装版和便携版 EXE。首个测试版尚未进行 Apple 公证或 Windows 发布者签名；桌面存档与网站存档相互独立。详见[桌面构建与发布说明](docs/desktop.md)。
+[下载 macOS / Windows 桌面版](https://github.com/MartinDelophy/math-valley/releases)。游戏资源随应用提供，可离线游玩，保留九种语言和本机存档。提供 Apple Silicon / Intel Mac 的 DMG 与 ZIP，以及 Windows 安装版和便携版 EXE。首个测试版尚未进行 Apple 公证或 Windows 发布者签名；桌面存档与网站存档相互独立。详见[桌面构建与发布说明](docs/desktop.md)。
 
 
 ## 运行
@@ -47,7 +47,7 @@ macOS 在构建后也可以双击 `开始数学漫游.command`，通过 Python 3
 
 数据保存在浏览器的 IndexedDB 中，包括通关、教学记录、语言、手札设置，以及每关最近完成一步后的解题状态。刷新或重新打开后可继续路线、流量和证明阶段，也保留视角与撤销历史。旧 localStorage 存档会自动迁移。不同浏览器、设备或网站域名分别存档，清理站点数据会清除本机记录。详见 [本机存档说明](docs/storage.md)。
 
-首次进入会先看到真实 3D 教学，再在独立小场景中亲手验证。新机制及证明阶段首次出现时，也有对应示例。教学支持四种语言，可暂停、跳过，并从「旅途菜单 → 教学演示」重看；不改变正在解题的状态，也不消耗正式关卡行动。
+首次进入会先看到真实 3D 教学，再在独立小场景中亲手验证。新机制及证明阶段首次出现时，也有对应示例。教学支持九种语言，可暂停、跳过，并从「旅途菜单 → 教学演示」重看；不改变正在解题的状态，也不消耗正式关卡行动。
 
 ```sh
 npm run build
@@ -73,3 +73,5 @@ npx vercel deploy --prebuilt --prod
 [https://math-valley.netlify.app/](https://math-valley.netlify.app/) 继续保留。对应配置是 [netlify.toml](netlify.toml)，同样发布 `dist/client`。
 
 详细维护流程见 [部署说明](docs/deployment.md)。
+
+支持简体中文、繁體中文、English、日本語、한국어、Français、Deutsch、Español、Português。在开场齿轮或旅途菜单的设置中切换语言、音乐、讲解和动画。背景音乐为巴赫《C大调前奏曲》的 CC0 钢琴录音；讲解使用设备提供的相应语言语音，设备缺少语音时会显示提示。
