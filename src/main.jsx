@@ -2,9 +2,12 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.jsx";
 import "./styles.css";
+import {saves} from './storage/index';
+import {setLocale,t} from './i18n/react';
 
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+const root=createRoot(document.getElementById('root'));
+root.render(<div className="save-loading" role="status">{t('正在读取本机存档…')}</div>);
+saves.init().then(profile=>{
+ setLocale(profile.locale);
+ root.render(<React.StrictMode><App/></React.StrictMode>);
+});

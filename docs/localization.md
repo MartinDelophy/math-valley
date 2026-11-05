@@ -4,7 +4,7 @@ The four locale identifiers are `zh-CN`, `en`, `ja` and `ko`. Chinese remains th
 
 `translate()` in `core.js` resolves whole source strings, then parameterized messages such as `见证点尚未按序齐备：{0} / {1}。`. Dynamic values and formulas stay intact. Nested feedback is resolved at render time. Headings composed from a Roman numeral and a catalog name use the longest registered phrases in a single pass. New runtime messages should have explicit source templates in the catalog, rather than relying on phrase fallback.
 
-`useLocale()` subscribes the React tree to locale changes. `setLocale()` updates the document language and the separate `math-valley-locale` preference. It does not recreate the game engine or mutate puzzle data. The existing `math-roam-chapter-v3` progress key and all level IDs remain unchanged.
+`useLocale()` subscribes the React tree to locale changes. `setLocale()` updates the document language and IndexedDB's `profile.locale` preference. It does not recreate the game engine or mutate puzzle data. The app loads the profile before mounting a scene. Legacy `math-valley-locale` and `math-roam-chapter-v3` records migrate automatically; level IDs remain unchanged.
 
 To add a language, extend `LANGUAGES`, the catalog columns, the locale mapping and appropriate font/layout fallbacks. Preserve every `{0}`, `{1}`, etc. in translations. Use concise action labels and preserve mathematical distinctions: based path homotopy, edge- versus vertex-disjoint paths, a closed lift versus a contractible loop, and monodromy versus deck transformations.
 

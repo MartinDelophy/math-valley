@@ -1,5 +1,6 @@
 import {useSyncExternalStore} from 'react';
 import {LANGUAGES,isLocale,localeKey,translate} from './core.js';
+import {saves} from '../storage/index.js';
 import './locale.css';
 function readLocale(){try{const saved=localStorage.getItem(localeKey);if(isLocale(saved))return saved;}catch{}return 'zh-CN';}
 // Keep subscriptions intact when Vite refreshes the catalog during development.
@@ -8,7 +9,7 @@ if(import.meta.hot)import.meta.hot.data.localeStore=store;
 export const t=value=>translate(value,store.locale);
 export function setLocale(value){
  if(!isLocale(value)||value===store.locale)return;
- store.locale=value;try{localStorage.setItem(localeKey,value);}catch{}
+ store.locale=value;saves.saveProfile({locale:value});
  document.documentElement.lang=value;for(const listener of store.listeners)listener();
 }
 export function useLocale(){return useSyncExternalStore(listener=>{store.listeners.add(listener);return()=>store.listeners.delete(listener);},()=>store.locale,()=> 'zh-CN');}

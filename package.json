@@ -17,5 +17,8 @@
     "react-dom": "19.2.0",
     "three": "^0.186.1",
     "vite": "6.4.2"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.7"
   }
 }

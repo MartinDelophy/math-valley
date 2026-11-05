@@ -2,6 +2,7 @@
 import {teachingMessages} from './teaching.js';
 export const messages=[
  ...teachingMessages,
+ ["正在读取本机存档…","Loading your local save…","このブラウザーの記録を読み込み中…","이 브라우저의 저장 데이터를 불러오는 중…"],
  [
   "数学漫游 · 序章",
   "Math Valley · Prologue",

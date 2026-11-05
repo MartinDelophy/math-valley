@@ -59,7 +59,7 @@ First-time visitors begin with a 3D demonstration, then repeat the actions in a 
 | Submit | Journal action or Enter |
 | Close notes | Escape |
 
-Chapter progress is stored locally in the browser. Changing ports or browsers gives a separate save. The completed levels and last selected level are saved; an unfinished route is kept during play and language changes, and restarts on a full page reload.
+Progress is saved in the browser's IndexedDB. Completed levels, language, teaching records, journal settings and each level's latest completed action are retained. Refreshing or reopening resumes the puzzle, including route drafts, proof stages, camera and undo history. Legacy localStorage saves migrate automatically. Different browsers, devices or site origins have separate saves; clearing site data removes them. See [local save notes](docs/storage.md).
 
 ## Deploy
 

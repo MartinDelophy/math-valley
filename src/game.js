@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {introCheckpoint,restoreIntro} from './storage/checkpoints.js';
 
 const HALF = Math.PI / 2;
 const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
@@ -213,17 +214,19 @@ export function createGame(container, callbacks) {
   }
   traveler.position.set(0,.75,4.23);traveler.rotation.y=Math.PI;
 
-  let angle=HALF, targetAngle=HALF, turn=null, walk=null, won=false, disposed=false;
+  const resumed=restoreIntro(callbacks.resume);
+  let angle=resumed?.angle??HALF, targetAngle=angle, turn=null, walk=null, won=resumed?.won||false, disposed=false;
   let hint=false, paused=false, frame=0, lastTime=performance.now();
-  let dragging=null, turnCount=0;
+  let dragging=null, turnCount=resumed?.turns||0;
   bridge.rotation.y=angle;
+  if(won){traveler.visible=false;traveler.position.set(0,endTop,-3.46);}
   const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();
   const plane=new THREE.Plane(new THREE.Vector3(0,1,0),-deckTop);
   const point=new THREE.Vector3();
   const v3=new THREE.Vector3();
   
   const aligned=()=>Math.abs(Math.sin(targetAngle))<.01;
-  function notify(){ callbacks.onState({aligned:aligned(),turning:!!turn,walking:!!walk,won,turns:turnCount,degrees:Math.round(Math.acos(Math.cos(targetAngle-HALF))*180/Math.PI)}); }
+  function notify(){ callbacks.onState({aligned:aligned(),turning:!!turn,walking:!!walk,won,turns:turnCount,degrees:Math.round(Math.acos(Math.cos(targetAngle-HALF))*180/Math.PI)});if(!turn&&!walk&&!dragging&&!handleDrag)callbacks.onCheckpoint?.(introCheckpoint(targetAngle,turnCount,won)); }
   let audio;let handleDrag=null;let pausedAt=0;
   function chime(success=false) {
     try{
