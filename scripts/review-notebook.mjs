@@ -1,3 +1,4 @@
+import {expansionCheckpoint} from '../src/expansion/checkpoint.js';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {mkdtempSync,mkdirSync,writeFileSync} from 'node:fs';
@@ -22,7 +23,9 @@ for(const id of ['01','05','08','13','2-01','2-02','2-03','2-10']){
  if(level.chapter===2&&!restoreTopology(level,checkpoint))throw Error(`Invalid review fixture ${id}`);
  fixtures.push({id,name:`${id}${state.phase?'-proof':''}`,checkpoint});
 }
-const selected=captureOnly?fixtures.slice(0,1):fixtures;
+for(const id of ['3-08','4-07']){const L=LEVELS.find(l=>l.id===id);fixtures.push({id,name:id,checkpoint:expansionCheckpoint(L,[],{index:0,overhead:false,zoom:1.1}),sizes:[[1366,768],[390,844]]});}
+const requested=process.argv.slice(2).filter(x=>!x.startsWith('--'));
+const selected=requested.length?fixtures.filter(f=>requested.includes(f.id)):captureOnly?fixtures.slice(0,1):fixtures;
 for(const fixture of selected){
  const folder=path.join(output,fixture.name);mkdirSync(folder,{recursive:true});
  const data={fixtures:[fixture],lessons:Object.fromEntries(Object.keys(LESSONS).map(key=>[key,'completed']))};writeFileSync(path.join(folder,'fixtures.json'),JSON.stringify(data));

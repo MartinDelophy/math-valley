@@ -4,6 +4,7 @@ import { List,ArrowArcLeft,ArrowArcRight,ArrowUUpLeft,Diamond,Lightning,CaretDou
 import { usable } from './chapter/spatial';
 import { modeLabels } from './chapter/levels';
 import './folded-hud.css';
+import {ExpansionContent} from './expansion/ExpansionContent';
 import { TopologyContent } from './topology/TopologyContent';
 import {Notebook,PrinciplePages} from './notebook/Notebook';
 
@@ -50,12 +51,12 @@ export function FoldedHud({intro,level:L,game:g,engine,open,paperOpen,setPaperOp
    <button className="compass-arrow" aria-label={t("向左切换视角 Q")} disabled={g.walking} onClick={()=>run('turnView',-1)}><ArrowArcLeft size={27} weight="light"/><kbd>Q</kbd></button>
    <div className="compass-face"><img src="/assets/hud/compass-frame.png" alt=""/><span aria-live="polite">{t(g.camera?.overhead?'俯':romans[g.camera?.index??0])}</span></div>
    <button className="compass-arrow" aria-label={t("向右切换视角 E")} disabled={g.walking} onClick={()=>run('turnView',1)}><ArrowArcRight size={27} weight="light"/><kbd>E</kbd></button>
-   <span className="compass-divider"/><button className="compass-undo" aria-label={t("撤一步")} title={t("撤回上一步")} disabled={busy||(!spatial&&!route&&L?.chapter!==2)||(!g.history&&!g.paths?.length&&!(g.draft?.length>1))} onClick={()=>run('undo')}><ArrowUUpLeft size={27} weight="light"/></button>
+   <span className="compass-divider"/><button className="compass-undo" aria-label={t("撤一步")} title={t("撤回上一步")} disabled={busy||(!spatial&&!route&&!(L?.chapter>=2))||(!g.history&&!g.paths?.length&&!(g.draft?.length>1))} onClick={()=>run('undo')}><ArrowUUpLeft size={27} weight="light"/></button>
   </nav>)}
   <aside className={`folded-paper ${paperOpen?'is-open':''}`} aria-label={t("旅途手札")} inert={Boolean(shown)}>
    <img className="paper-art" src="/assets/hud/folded-paper.png" alt="" draggable="false"/>
    <button className="paper-tab" aria-label={t(paperOpen?'收起旅途手札':'展开旅途手札')} aria-expanded={paperOpen} onClick={()=>setPaperOpen(!paperOpen)}>{t(paperOpen?<CaretDoubleRight size={23}/>:<CaretDoubleLeft size={23}/>)}<span>{t("手札")}</span></button>
-   {L?.chapter===2?<TopologyContent level={L} game={g} engine={engine} open={open} paperOpen={paperOpen}/>:<div className="notebook-host" inert={!paperOpen}>
+   {L?.chapter>=3?<ExpansionContent level={L} game={g} engine={engine} open={open} paperOpen={paperOpen}/>:L?.chapter===2?<TopologyContent level={L} game={g} engine={engine} open={open} paperOpen={paperOpen}/>:<div className="notebook-host" inert={!paperOpen}>
     <Notebook kicker={intro?'序章 · 方向与旋转':`${t('第一章')} · ${L.displayId||L.id}`} goal={goal} goalLines={intro?['方向改变','长度不变']:undefined} resetKey={`${intro?'intro':L.id}:${g.phase||0}`} action={()=>{if(primary)primary.action();}} actionLabel={g.walking?'旅途中…':primary?.label||'检验旅程'} disabled={busy||primary?.disabled} onPrinciple={()=>open('principle')} feedbackKey={g.tested?g.feedback:''} actionTab={spatial&&!group&&adjacent.length>1?'observe':undefined}
      stats={<><span><Diamond size={21} weight="light"/><b>{t(statusA)}</b></span><i/><span>{spatial&&<Lightning size={20} weight="light"/>}<b>{t(intro?'一整圈的四分之一':statusB)}</b></span></>}
      prove={<PrinciplePages principles={intro?[['中心固定','桥围绕同一个固定点转动。'],['转过一个直角','90° 是一整圈的四分之一。'],['形状与大小不变','每一点到中心的距离始终不变。']]:L.principles}/>}

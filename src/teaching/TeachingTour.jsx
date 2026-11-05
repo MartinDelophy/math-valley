@@ -1,3 +1,4 @@
+import {createExpansionGame} from '../expansion/scene';
 import {useEffect,useRef,useState} from 'react';
 import {ArrowRight,Check,Play,Pause,ArrowCounterClockwise,X,Compass} from '@phosphor-icons/react';
 import {t,useLocale} from '../i18n/react';
@@ -19,7 +20,7 @@ export function TeachingTour({lessonKey,onFinish,onHome}){
   setGame({});setError(false);
   const project=positions=>{for(const [kind,items] of Object.entries(positions))for(const [id,p] of Object.entries(items)){const pin=pins.current[kind+id];if(pin){pin.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;pin.style.visibility=p.visible===false?'hidden':'visible';}}};
   try{
-   engine.current=lesson.engine==='intro'?createGame(host.current,{onState:setGame,onProject:p=>project({intro:{handle:p.handle,house:p.house}})}):lesson.engine==='chapter'?createChapterGame(host.current,lesson.level,{onState:setGame,onProject:project}):createTopologyGame(host.current,lesson.level,{onState:setGame});
+   engine.current=lesson.engine==='intro'?createGame(host.current,{onState:setGame,onProject:p=>project({intro:{handle:p.handle,house:p.house}})}):lesson.engine==='chapter'?createChapterGame(host.current,lesson.level,{onState:setGame,onProject:project}):lesson.engine==='expansion'?createExpansionGame(host.current,lesson.level,{onState:setGame}):createTopologyGame(host.current,lesson.level,{onState:setGame});
   }catch(e){console.error('Teaching scene failed',e);setError(true);}
   return()=>{engine.current?.dispose();engine.current=null;};
  },[lessonKey,epoch]);

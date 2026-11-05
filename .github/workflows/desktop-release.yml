@@ -64,6 +64,11 @@ jobs:
         env:
           MATH_VALLEY_SMOKE_EXPECT_ARCH: ${{ matrix.arch }}
         run: node scripts/smoke-desktop.mjs --executable "${{ matrix.executable }}"
+      - name: Play new chapters in the packaged application
+        env:
+          MATH_VALLEY_EXPANSION_EXECUTABLE: ${{ github.workspace }}/${{ matrix.executable }}
+          MATH_VALLEY_SMOKE_EXPECT_ARCH: ${{ matrix.arch }}
+        run: node scripts/review-expansion.mjs 3-08 4-07
       - name: Upload native diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -73,6 +78,8 @@ jobs:
           path: |
             release/smoke-*/*.png
             release/smoke-*/*.json
+            release/expansion-review/*/*.png
+            release/expansion-review/*/result.json
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.platform }}-${{ matrix.arch }}

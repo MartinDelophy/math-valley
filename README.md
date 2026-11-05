@@ -10,7 +10,7 @@
 
 A playable 3D mathematics journey. Rotate miniature architecture, traverse layered galleries, build mathematical objects, and submit evidence for your solution.
 
-**简体中文 · 繁體中文 · English · 日本語 · 한국어 · Français · Deutsch · Español · Português** — use the gear button on the title screen or **Journey menu → Settings**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
+**简体中文 · 繁體中文 · English · 日本語 · 한국어 · Français · Deutsch · Español · Português** — use the gear button on the title screen or **Journey menu → Settings**. Objectives, principle notes, hints, actions, feedback and all four chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
 
 ![Math Valley gameplay](docs/screenshots/gameplay-en.png)
 
@@ -25,7 +25,9 @@ A playable 3D mathematics journey. Rotate miniature architecture, traverse layer
 
 - **Prologue — Direction & rotation:** an introduction to rotating and walking through the world.
 - **Chapter I — Bridges & Connection:** 16 levels on viewpoint passages, constrained spanning trees, disjoint paths, cuts, flow conservation and residual networks.
+- **Chapter III — Court of Symmetry:** 8 levels on dihedral groups, noncommutativity, stabilizers, cosets, normality, kernels and quotients. Two galleries connect through viewpoint-aligned mirror gates.
 - **Chapter II — Tower of Loops:** 12 levels on winding numbers, inverses, path homotopy, finite covers, universal covers and noncommuting actions. Three architectural families — Moonwell Tower, Twin Courtyards and Unwound Spire — carry distinct puzzles.
+- **Chapter IV — Echo Beacons:** 8 levels on parity checks, erasures, syndrome decoding, minimum distance and double-error ambiguity. Repair signals in a layered beacon network.
 
 The journey is for learners with some university mathematics. Observation, construction and proof are part of the game. Notes explain why a move or certificate is valid. Some levels require both travel and an independent proof stage.
 
@@ -100,6 +102,7 @@ npm test
 
 The checks cover authored puzzle solvability, graph and topology rules, covering permutations, proof constraints, translation completeness and parameter preservation, dialog/HUD rendering across all nine languages, and static packaging. A GitHub Actions workflow runs the build and tests.
 
+- `src/expansion/` — symmetry and coding chapters, independent lessons and replay-validated saves.
 - `src/chapter/` — graph-theory chapter and shared Three.js stage.
 - `src/topology/` — covering-space levels, pure mathematics and geometry.
 - `src/i18n/` — nine-language message catalog, runtime and layout rules.
@@ -111,3 +114,5 @@ See [localization notes](docs/localization.md) for adding a language and [asset 
 This is a playable prototype. Architectural ornament and difficulty balancing remain open for refinement. The game is independently authored and is not affiliated with Monument Valley or its creators.
 
 The right-hand journal uses Observe/Reasoning tabs and paginated text, with the main action fixed below. Updates preserve progress by stable level ID. Use **Journey save** on the title screen for portable JSON backups; imported saves preserve the current journey as a backup first. See [save compatibility](docs/save-format.md).
+
+The current edition has **44 formal puzzles plus the prologue**, with piano BGM and sound effects only. Guidance uses text and live demonstrations, without TTS. See [new chapter mathematics](docs/chapters-iii-iv.md).

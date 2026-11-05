@@ -32,3 +32,5 @@ npm run dev -- --host 127.0.0.1
 現在はプレイ可能な試作版です。[開発・検証方法](README.md)
 
 公開版は [Vercel](https://math-valley.vercel.app/) です。GitHubの `main` へのプッシュで更新されます。[Netlify版](https://math-valley.netlify.app/)も利用できます。[公開手順](docs/deployment.md)
+
+第3章「対称の庭」8ステージと第4章「反響の信標」8ステージを追加し、正式ステージは計44。群作用・剰余類と、誤り訂正・シンドロームを空間機構で学びます。音声合成は使わず、ピアノBGMと効果音、文章と実演で案内します。

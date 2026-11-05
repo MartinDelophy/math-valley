@@ -32,3 +32,5 @@ npm run dev -- --host 127.0.0.1
 현재 플레이 가능한 프로토타입입니다. [개발 및 검증 방법](README.md)
 
 정식 버전은 [Vercel](https://math-valley.vercel.app/)에서 이용할 수 있습니다. GitHub의 `main`에 푸시하면 업데이트됩니다. [Netlify 버전](https://math-valley.netlify.app/)도 유지됩니다. [배포 안내](docs/deployment.md)
+
+3장 「대칭의 정원」 8단계와 4장 「메아리 신호탑」 8단계를 추가하여 정식 레벨은 총 44개입니다. 군 작용과 잉여류, 오류 정정과 신드롬을 공간 장치로 배웁니다. TTS 없이 피아노 BGM과 효과음, 글과 시연으로 안내합니다.

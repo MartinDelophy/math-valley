@@ -32,3 +32,5 @@
 自动存档属于浏览器/应用本机数据；清除这些数据会影响自动存档。导出的 JSON 可作为独立备份。此版本没有账号云同步。
 
 验证包括：关卡目录扩充后重开、暂时下线的关卡保留、跨数据库导出/导入、当前旅程归档、损坏和未来格式拒绝、旧标签页冲突，以及实际应用中的下载、文件预览、恢复与再次启动。
+
+Content version 2 appends `3-01`…`3-08` and `4-01`…`4-08`. New engine checkpoints store finished action traces and rebuild them through the mathematical transition rules before accepting a restore. The original 28 IDs and rules fingerprints remain stable.

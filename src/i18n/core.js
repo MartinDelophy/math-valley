@@ -1,10 +1,11 @@
+import expansion from './expansion.json' with {type:'json'};
 import { messages } from './messages.js';
 import {LANGUAGES,isLocale} from './languages.js';
 import extended from './extended.json' with {type:'json'};
 export {LANGUAGES,isLocale};
 export const localeKey='math-valley-locale';
 const column={en:1,ja:2,ko:3};
-const cell=(row,locale)=>column[locale]?row[column[locale]]:extended[locale]?.[row[0]]??row[1];
+const cell=(row,locale)=>column[locale]?row[column[locale]]:extended[locale]?.[row[0]]??expansion[locale]?.[row[0]]??row[1];
 const exact=new Map(messages.map(row=>[row[0],row]));
 const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 // Engine feedback stays in its source form. Resolve its parameters only at render

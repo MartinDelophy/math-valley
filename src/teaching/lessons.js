@@ -1,8 +1,10 @@
+import {expansionLessons} from '../expansion/lessons.js';
 // Small, independent examples run in the same engines as the actual chapters.
 // Their states never enter the journey's progress or current puzzle state.
 export const lessonStorageKey='math-valley-lessons-v1';
 export function lessonFor(level,phase=0,interaction='flow'){
  if(!level)return 'rotation';
+ if(level.chapter>=3)return level.chapter===3?'symmetry':'coding';
  if(level.chapter===2){
   if(level.construct&&phase===0)return 'seams';
   if(level.evidence&&phase>0)return level.evidence;
@@ -29,6 +31,7 @@ const node=(id,copy,done)=>at('node',[id],`点击平台 ${id}`,copy,done);
 const loop=(letter,copy,count)=>at('loop',[letter],letter===letter.toLowerCase()?`沿 ${letter} 正向绕行`:`沿 ${letter.toLowerCase()} 反向绕行`,copy,g=>g.raw?.length===count);
 const test=(copy,done=g=>g.won)=>at('test',[],'检验这个小例子',copy,done);
 export const LESSONS={
+ ...expansionLessons,
  rotation:{title:'先看一次，再亲手试试',engine:'intro',principle:'旋转保持长度与形状，只改变方向；两端接通后，旅人才能通过。',steps:[
   at('rotate',[-Math.PI/2],'旋转桥梁90度','观察金色机关：转过一个直角，让桥梁两端对准台阶。',g=>g.aligned),
   at('walk',[],'走过桥梁','接通之后再行走。场景中的小屋，就是这次旅程的终点。',g=>g.won)]},

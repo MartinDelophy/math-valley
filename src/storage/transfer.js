@@ -1,6 +1,6 @@
 export const SAVE_FORMAT='math-valley-save';
 export const SAVE_VERSION=1;
-export const CONTENT_VERSION=1;
+export const CONTENT_VERSION=2;
 export const MAX_SAVE_BYTES=8*1024*1024;
 export const safeLevelId=id=>typeof id==='string'&&/^(?:intro|[0-9]{2,4}|[0-9]{1,4}-[a-zA-Z0-9_-]{1,60})$/.test(id);
 const object=value=>Boolean(value)&&typeof value==='object'&&!Array.isArray(value);

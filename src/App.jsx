@@ -3,7 +3,8 @@ import { useEffect,useRef,useState } from 'react';
 import { ArrowArcLeft,ArrowArcRight,Check,Compass,Diamond } from '@phosphor-icons/react';
 import { createGame } from './game';
 import { createChapterGame } from './chapter/scene';
-import { LEVELS } from './catalog';
+import { LEVELS,chapterTitle } from './catalog';
+import {createExpansionGame} from './expansion/scene';
 import { createTopologyGame } from './topology/scene';
 import { usable } from './chapter/spatial';
 import { Journal } from './Journal';
@@ -33,12 +34,12 @@ export function App({onHome,active=true}){
  useEffect(()=>{
   setGame(blank);setError(false);setSnapshot('');hud.current={};
   const id=intro?'intro':base.id,callbacks={onState:setGame,resume:saves.level(id),onCheckpoint:checkpoint=>saves.saveLevel(id,checkpoint)};
-  try{engine.current=intro?createGame(host.current,{...callbacks,onProject:({handle:h,label:l})=>{if(handle.current)handle.current.style.transform=`translate(${h.x}px,${h.y}px) translate(-50%,-50%)`;if(rotation.current)rotation.current.style.transform=`translate(${l.x}px,${l.y}px) translate(-50%,0)`;}}):base.chapter===2?createTopologyGame(host.current,base,callbacks):createChapterGame(host.current,base,{...callbacks,onProject:positions=>{for(const [kind,points] of Object.entries(positions))for(const [id,p] of Object.entries(points)){const el=hud.current[kind+id];if(el){el.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;el.style.visibility=p.visible===false?'hidden':'visible';}}}});}catch(e){console.error('Scene initialization failed',e);setError(true);}
+  try{engine.current=intro?createGame(host.current,{...callbacks,onProject:({handle:h,label:l})=>{if(handle.current)handle.current.style.transform=`translate(${h.x}px,${h.y}px) translate(-50%,-50%)`;if(rotation.current)rotation.current.style.transform=`translate(${l.x}px,${l.y}px) translate(-50%,0)`;}}):base.chapter>=3?createExpansionGame(host.current,base,callbacks):base.chapter===2?createTopologyGame(host.current,base,callbacks):createChapterGame(host.current,base,{...callbacks,onProject:positions=>{for(const [kind,points] of Object.entries(positions))for(const [id,p] of Object.entries(points)){const el=hud.current[kind+id];if(el){el.style.transform=`translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;el.style.visibility=p.visible===false?'hidden':'visible';}}}});}catch(e){console.error('Scene initialization failed',e);setError(true);}
   return()=>engine.current?.dispose();
  },[index]);
  useEffect(()=>{engine.current?.pause(!active||Boolean(shown));},[active,shown,index]);
  useEffect(()=>{if(game.won){const id=intro?'intro':base.id;setCompleted(old=>old.includes(id)?old:[...old,id]);if(!intro)setSnapshot(engine.current?.snapshot?.()||'');}},[game.won,index]);
- useEffect(()=>{document.title=intro?t('数学漫游 · 序章'):`${t('数学漫游')} · ${t(base.chapter===2?'第二章 · 回环之塔':'第一章 · 桥与连通')} · ${base.displayId||base.id} ${t(base.title)}`;const canvas=host.current?.querySelector('canvas');if(canvas)canvas.setAttribute('aria-label',t(intro?'三维关卡：起点、可旋转桥梁和终点小屋':'三维数学关卡，桥梁、平台与机关均可操作'));},[index,locale]);
+ useEffect(()=>{document.title=intro?t('数学漫游 · 序章'):`${t('数学漫游')} · ${t(chapterTitle(base))} · ${base.displayId||base.id} ${t(base.title)}`;const canvas=host.current?.querySelector('canvas');if(canvas)canvas.setAttribute('aria-label',t(intro?'三维关卡：起点、可旋转桥梁和终点小屋':'三维数学关卡，桥梁、平台与机关均可操作'));},[index,locale]);
  useEffect(()=>{saves.saveProfile({completed,currentLevel:intro?'intro':base.id});},[index,completed]);
  useEffect(()=>{saves.saveProfile({preferences:{labels,paperOpen}});},[labels,paperOpen]);
  function open(kind){if(!intro&&engine.current?.snapshot)setSnapshot(engine.current.snapshot());setDialog(kind);}

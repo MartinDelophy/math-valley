@@ -1,3 +1,4 @@
+import {SYMMETRY_LEVELS,CODING_LEVELS,SYMMETRY_ACTS,CODING_ACTS} from '../src/expansion/levels.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {messages} from '../src/i18n/messages.js';
@@ -10,7 +11,7 @@ test('every source message has three complete translations with the same paramet
 });
 test('all authored level and act text is registered, including phases and mathematical principles',()=>{
  const keys=new Set(messages.map(row=>row[0]));function walk(value){if(typeof value==='string'&&han.test(value)){assert(keys.has(value),value);for(const locale of ['en','ko','fr','de','es','pt-BR'])assert(!han.test(translate(value,locale)),value);}else if(Array.isArray(value))value.forEach(walk);else if(value&&typeof value==='object')Object.values(value).forEach(walk);}
- walk([LEVELS,ACTS,TOPOLOGY_LEVELS,TOPOLOGY_ACTS]);
+ walk([LEVELS,ACTS,TOPOLOGY_LEVELS,TOPOLOGY_ACTS,SYMMETRY_LEVELS,CODING_LEVELS,SYMMETRY_ACTS,CODING_ACTS]);
 });
 test('dynamic feedback translates nested messages, parameters and mathematical notation',()=>{
  assert.equal(translate('完成 6 次绕行；行走与同伦证据均已验证。','en'),'Completed 6 loops. Journey and homotopy certificates are verified.');

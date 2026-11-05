@@ -1,3 +1,4 @@
+import {chapterTitle} from '../catalog';
 import {useEffect,useRef,useState} from 'react';
 import {ArrowRight,ArrowCounterClockwise,Compass,X,Check,BookmarkSimple,Pause,Play} from '@phosphor-icons/react';
 import {t,useLocale} from '../i18n/react';
@@ -11,7 +12,7 @@ import './opening.css';
 
 export function journeyLocation(profile){
  const level=LEVELS.find(l=>l.id===profile.currentLevel);
- return level?`${t(level.chapter===2?'第二章 · 回环之塔':'第一章 · 桥与连通')} · ${level.displayId||level.id} ${t(level.title)}`:t('序章 · 方向与旋转');
+ return level?`${t(chapterTitle(level))} · ${level.displayId||level.id} ${t(level.title)}`:t('序章 · 方向与旋转');
 }
 export function OpeningPanel({kind,archives=[],busy,error,onCancel,onNew,onRestore}){
  const locale=useLocale(),box=useRef();
@@ -58,7 +59,7 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
   finally{if(mounted.current){locked.current=false;setBusy(false);}}
  }
  const done=profile.completed.filter(id=>LEVELS.some(level=>level.id===id)).length,current=LEVELS.find(level=>level.id===profile.currentLevel);
- const chapter=current?t(current.chapter===2?'第二章 · 回环之塔':'第一章 · 桥与连通'):t('序章 · 方向与旋转');
+ const chapter=current?t(chapterTitle(current)):t('序章 · 方向与旋转');
  return <main ref={root} className={`opening-screen ${departing?'is-departing':''}`} aria-busy={busy}>
   <div className="opening-layout" inert={Boolean(panel)||departing}>
    <div className="opening-scene" ref={host} inert aria-hidden="true"/>

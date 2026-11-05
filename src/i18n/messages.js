@@ -1,3 +1,4 @@
+import expansion from './expansion.json' with {type:'json'};
 import {saveMessages} from './saves.js';
 import {notebookMessages} from './notebook.js';
 // Source-language keys; columns: zh-CN, en, ja, ko.
@@ -5,6 +6,7 @@ import {teachingMessages} from './teaching.js';
 import {settingsMessages} from './settings.js';
 import {openingMessages} from './opening.js';
 export const messages=[
+ ...Object.keys(expansion.en).map(key=>[key,expansion.en[key],expansion.ja[key],expansion.ko[key]]),
  ...saveMessages,
  ...notebookMessages,
  ...settingsMessages,

@@ -11,6 +11,7 @@ files:
   - smoke.cjs
   - review.cjs
   - notebook-review.cjs
+  - expansion-review.cjs
   - package.json
 extraResources:
   - from: ../dist/client

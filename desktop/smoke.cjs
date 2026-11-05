@@ -12,11 +12,11 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
- if(['reduced','notebook'].includes(phase))app.commandLine.appendSwitch('force-prefers-reduced-motion');
+ if(['reduced','notebook','expansion'].includes(phase))app.commandLine.appendSwitch('force-prefers-reduced-motion');
  console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged}, arch=${process.arch})`);
  if(process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH)assert.equal(process.arch,process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH);
  let win;const errors=[],failed=[];
- const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},['review','notebook'].includes(phase)?340000:90000);
+ const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},['review','notebook','expansion'].includes(phase)?340000:90000);
  try{
   await app.whenReady();registerContent();
   win=createWindow({show:process.env.CI==='true',backgroundThrottling:false,width:1672,height:941,testViewport:true});
@@ -25,6 +25,7 @@ async function run({registerContent,createWindow}) {
   win.webContents.session.webRequest.onErrorOccurred(details=>{if(details.error==='net::ERR_ABORTED'&&details.url.endsWith('/audio/bach-prelude-bwv846.mp3'))return;failed.push({url:details.url,error:details.error});});
   await once(win.webContents,'did-finish-load');
   await waitFor(win,"Boolean(document.querySelector('.opening-primary') && document.querySelector('canvas')?.width)");
+  if(phase==='expansion'){await require('./expansion-review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   if(phase==='notebook'){await require('./notebook-review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   if(phase==='review'){await fs.mkdir(output,{recursive:true});await require('./review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   const animated=await win.webContents.executeJavaScript("Boolean(document.querySelector('.opening-motion'))");

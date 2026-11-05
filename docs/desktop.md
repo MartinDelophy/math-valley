@@ -1,6 +1,6 @@
 # Desktop builds
 
-Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The nine languages, teaching examples, 28 puzzles and local journey backups are shared with the web version. The opening rotates slowly, can be paused, and pushes the camera into the cloister before revealing a resumed game. Reduced-motion settings stop idle rotation and use a brief dissolve.
+Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The nine languages, teaching examples, 44 puzzles and local journey backups are shared with the web version. The opening rotates slowly, can be paused, and pushes the camera into the cloister before revealing a resumed game. Reduced-motion settings stop idle rotation and use a brief dissolve.
 
 ## Downloads
 
