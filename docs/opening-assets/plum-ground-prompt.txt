@@ -1,0 +1,9 @@
+Built-in ImageGen. Reference: reference/opening/portico.png. Exported at 1024x1024 PNG, opaque.
+
+Use case: stylized-concept.
+Asset type: seamless tileable albedo material texture for a Three.js ground plane.
+Reference: the attached Math Valley opening is a STYLE AND COLOR REFERENCE ONLY. Focus on its matte plum/mauve studio limestone ground near the lower right (roughly x750,y760 through bottom of the 1672x941 reference).
+Generate exactly one opaque square 1024 x 1024 texture swatch filling the whole image. Straight overhead orthographic view. Seamless/tileable at all four edges.
+Material: matte, subtly porous limestone/studio floor, refined very fine low-contrast natural stone grain. Muted aubergine #45344e / #35264f with tiny dusty warm mauve variation. Ground must be quiet and subdued so ivory architecture reads above it. No large grain, no obvious cracks or individual tiles.
+Lighting: perfectly flat even neutral illumination; this is an ALBEDO texture and real 3D lights will supply all shading.
+Absolutely NO objects, buildings, characters, letters, text, symbols, UI, borders, perspective, baked shadows, spotlight, gradient, vignette or edge darkening. No background separate from the material swatch.

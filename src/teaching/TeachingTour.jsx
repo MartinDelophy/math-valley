@@ -8,7 +8,7 @@ import {formatWord,winding} from '../topology/math';
 import {LESSONS} from './lessons';
 import './teaching.css';
 
-export function TeachingTour({lessonKey,onFinish}){
+export function TeachingTour({lessonKey,onFinish,onHome}){
  const locale=useLocale(),lesson=LESSONS[lessonKey],host=useRef(),engine=useRef(),pins=useRef({}),overlay=useRef();
  const [stage,setStage]=useState('welcome'),[step,setStep]=useState(0),[epoch,setEpoch]=useState(0),[game,setGame]=useState({}),[armed,setArmed]=useState(false),[gesture,setGesture]=useState(false),[error,setError]=useState(false);
  const [reduced]=useState(()=>typeof window!=='undefined'&&(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||false));
@@ -66,7 +66,7 @@ export function TeachingTour({lessonKey,onFinish}){
     </div>
     <div className="teaching-actions">
      {error?<button className="teaching-primary" onClick={()=>start('watch')}>{t('重试演示')}</button>:stage==='welcome'?<><button className="teaching-primary" onClick={()=>start('watch')}><Play size={19} weight="fill"/>{t('先看演示')}</button><button className="teaching-secondary" onClick={()=>start('practice')}>{t('直接动手试试')}<ArrowRight size={17}/></button><LanguagePicker/></>:stage==='summary'?<><button className="teaching-primary" onClick={()=>start('practice')}>{t('轮到我试试')}<ArrowRight size={19}/></button><button className="teaching-secondary" onClick={()=>start('watch')}><ArrowCounterClockwise size={16}/>{t('再看一遍')}</button></>:stage==='complete'?<><button className="teaching-primary" onClick={()=>onFinish('completed')}><Check size={20}/>{t('开始正式探索')}</button><button className="teaching-secondary" onClick={()=>start('practice')}>{t('再练习一次')}</button></>:<><button className={`teaching-primary ${stage==='practice'?'is-guided':''}`} disabled={busy||armed||stage==='paused'||(stage==='watch'&&!reduced)} onClick={run}>{busy||armed?t('观察变化…'):t(stage==='watch'&&reduced?'演示下一步':stage==='watch'?'演示进行中':current.label)}</button><div className="teaching-playback">{stage!=='practice'&&<button onClick={()=>setStage(stage==='paused'?'watch':'paused')}>{stage==='paused'?<Play size={16}/>:<Pause size={16}/>} {t(stage==='paused'?'继续演示':'暂停演示')}</button>}<button onClick={()=>start(stage==='practice'?'practice':'watch')}><ArrowCounterClockwise size={16}/>{t('从头开始')}</button>{stage==='watch'&&<button onClick={()=>start('practice')}>{t('由我来操作')}</button>}</div></>}
-     <p className="teaching-footnote">{t('之后可在旅途菜单中重看教学。')}</p>
+     <p className="teaching-footnote">{t('之后可在旅途菜单中重看教学。')}</p>{onHome&&<button className="teaching-secondary" onClick={onHome}>{t('回到开场')}</button>}
     </div>
    </div>
   </aside>

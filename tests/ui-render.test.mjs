@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {createServer} from 'vite';
-let server,Journal,FoldedHud,TeachingTour,lessons,setLocale,levels;
+let server,Journal,FoldedHud,TeachingTour,lessons,setLocale,levels,StartScreen,OpeningPanel;
 before(async()=>{
  globalThis.document={documentElement:{lang:'zh-CN'}};
  globalThis.localStorage={getItem:()=>null,setItem:()=>{}};
@@ -13,6 +13,7 @@ before(async()=>{
  ({setLocale}=await server.ssrLoadModule('/src/i18n/react.jsx'));
  ({LEVELS:levels}=await server.ssrLoadModule('/src/catalog.js'));
  ({TeachingTour}=await server.ssrLoadModule('/src/teaching/TeachingTour.jsx'));
+ ({StartScreen,OpeningPanel}=await server.ssrLoadModule('/src/opening/StartScreen.jsx'));
  ({LESSONS:lessons}=await server.ssrLoadModule('/src/teaching/lessons.js'));
 });
 after(async()=>{await server?.close();delete globalThis.document;delete globalThis.localStorage;});
@@ -39,4 +40,12 @@ for(const language of ['zh-CN','en','ja','ko'])test(`${language}: HUD and proof 
  const html=renderToStaticMarkup(React.createElement(FoldedHud,{level,game,engine:{current:{}},open:()=>{},setPaperOpen:()=>{},paperOpen:true}));
  assert(html.includes('paper-primary'));if(language==='en'||language==='ko')assert(!/[\u3400-\u9fff]/.test(html),`${language}/${base.id}/${phase}: ${html.match(/.{0,20}[\u3400-\u9fff].{0,25}/)?.[0]}`);
  }
+});
+
+for(const language of ['zh-CN','en','ja','ko'])test(`${language}: opening supports new, returning, stale, confirmation and archive states`,()=>{
+ setLocale(language);const profile={currentLevel:'2-01',completed:['intro','01']};
+ const states=[React.createElement(StartScreen,{profile,hasJourney:false}),React.createElement(StartScreen,{profile,hasJourney:true}),React.createElement(StartScreen,{profile,hasJourney:true,isStale:true}),React.createElement(OpeningPanel,{kind:'new'}),React.createElement(OpeningPanel,{kind:'archives',archives:[]}),React.createElement(OpeningPanel,{kind:'archives',archives:[{id:'old',createdAt:100000,profile}]})];
+ for(const view of states){const html=renderToStaticMarkup(view);assert(!html.includes('undefined'));if(language==='en'||language==='ko')assert(!/[\u3400-\u9fff]/.test(html.replaceAll('中文','').replaceAll('日本語','')),html);}
+ const returning=renderToStaticMarkup(states[1]);assert(returning.includes('opening-primary'));assert(returning.includes('opening-new'));assert(returning.includes('opening-history'));
+ assert(renderToStaticMarkup(states[3]).includes('role="alertdialog"'));assert(renderToStaticMarkup(states[4]).includes('opening-empty'));assert(renderToStaticMarkup(states[5]).includes('opening-archive'));
 });

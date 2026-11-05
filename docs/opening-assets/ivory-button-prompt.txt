@@ -1,0 +1,9 @@
+Built-in ImageGen. Exported with sips: crop transparent outer margin and resample to 900 x 190 pixels. Original alpha preserved.
+
+Use case: background-extraction / UI asset generation.
+Asset type: a single primary-button chrome image for a live web game interface.
+Input: the attached Math Valley title-screen design. Its role is exact style reference. Focus ONLY on the ivory-and-gold button near x66,y600,width463,height96 in the 1672x941 reference.
+Generate a faithful isolated button FRAME without any label. Desired canvas 900 x 190 px, long horizontal pill, aspect ratio 4.74:1. The button fills nearly the entire canvas, centered and symmetrical with very small transparent outside margins.
+The button face is warm ivory porcelain/paper, softly illuminated, with extremely subtle fine texture. Narrow double metallic gold rim, gentle raised beveled edge, darker fine bottom edge giving tactile thickness. At the extreme left and right inside ends, include the same small refined gold diamond/compass ornaments seen in the reference. Center 70% completely empty for editable UI text.
+Maintain the selected design's calm premium mathematical-adventure styling. Match the actual source button, not a generic game asset.
+Transparent background with a real alpha channel. No words, letters, numbers, arrows, logos, captions, purple backdrop, teal fill, extra buttons, UI screens or mockup presentation. Do not make a large opaque rectangular white canvas. The only visible subject must be the ivory-and-gold button frame.

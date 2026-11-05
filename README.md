@@ -10,7 +10,7 @@
 
 A playable 3D mathematics journey. Rotate miniature architecture, traverse layered galleries, build mathematical objects, and submit evidence for your solution.
 
-**中文 · English · 日本語 · 한국어** — change language in **Journey menu → Language**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
+**中文 · English · 日本語 · 한국어** — change language on the title screen or in **Journey menu → Language**. Objectives, principle notes, hints, actions, feedback and both chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
 
 ![Math Valley gameplay](docs/screenshots/gameplay-en.png)
 
@@ -58,6 +58,8 @@ First-time visitors begin with a 3D demonstration, then repeat the actions in a 
 | Principle, hint, chapter select, language | Journal / Journey menu |
 | Submit | Journal action or Enter |
 | Close notes | Escape |
+
+The 3D title screen offers **Begin journey**, **Continue journey**, and **Past journeys**. Starting a new journey backs up the current one before returning to the prologue lesson. Restore any previous journey from the title screen; gameplay and lessons both provide **Return to title**.
 
 Progress is saved in the browser's IndexedDB. Completed levels, language, teaching records, journal settings and each level's latest completed action are retained. Refreshing or reopening resumes the puzzle, including route drafts, proof stages, camera and undo history. Legacy localStorage saves migrate automatically. Different browsers, devices or site origins have separate saves; clearing site data removes them. See [local save notes](docs/storage.md).
 
