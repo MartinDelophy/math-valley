@@ -14,7 +14,7 @@ Animated opening included: slow architectural rotation with Pause/Play, a camera
 
 Validation: 146 game tests and 3 desktop protocol tests. Packaged macOS ARM64 and Windows x64 pass native integration checks; Intel Mac builds are not included in this first release: hosted Intel runners lack a usable graphics device and the Rosetta integration run did not complete. They need separate hardware validation before publication.
 
-Language & sound settings: 简体中文, 繁體中文, English, 日本語, 한국어, Français, Deutsch, Español, Português. A gear menu controls language, piano BGM, device-voice guidance, volume, effects and opening motion. Long translated labels fit their button plates. Music is the complete CC0 Bach BWV 846 recording performed by Kimiko Ishizaka. Speech availability depends on installed device voices; new European translations are an initial machine-assisted edition with terminology corrections.
+Language & sound settings: 简体中文, 繁體中文, English, 日本語, 한국어, Français, Deutsch, Español, Português. A gear menu controls language, piano BGM, volume, sound effects and opening motion. Long translated labels fit their button plates. Music is the complete CC0 Bach BWV 846 recording performed by Kimiko Ishizaka. Guidance uses text and teaching demonstrations without TTS. New European translations are an initial machine-assisted edition with terminology corrections.
 
 The right-hand journal follows the selected paginated design: Observe/Reasoning tabs, complete text across pages, fixed primary action and mathematical notes, with no native scrollbars.
 

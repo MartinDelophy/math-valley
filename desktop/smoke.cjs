@@ -49,7 +49,7 @@ async function run({registerContent,createWindow}) {
    await win.webContents.executeJavaScript("document.querySelector('.opening-footer .settings-trigger').click()");
    await waitFor(win,"Boolean(document.querySelector('.settings-dialog'))");
    // Audio interaction is checked separately on hardware; keep cloud CI silent.
-   await win.webContents.executeJavaScript("for(const key of ['music','narration']){const b=document.querySelector('[aria-labelledby=\"setting-'+key+'\"]');if(b.getAttribute('aria-checked')==='true')b.click();}");
+   await win.webContents.executeJavaScript("for(const key of ['music']){const b=document.querySelector('[aria-labelledby=\"setting-'+key+'\"]');if(b.getAttribute('aria-checked')==='true')b.click();}");
    for(const locale of ['en','fr','de','es','pt-BR','zh-TW','ja','ko','zh-CN']){await win.webContents.executeJavaScript(`document.querySelector('.language-picker button[lang="${locale}"]').click()`);await waitFor(win,`document.documentElement.lang==="${locale}"`);}
    await win.webContents.executeJavaScript("document.querySelector('.settings-close').click()");
    await waitFor(win,"!document.querySelector('.settings-dialog')");

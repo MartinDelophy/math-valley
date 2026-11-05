@@ -14,13 +14,9 @@ async function review({win,output,waitFor}){
  await waitFor(win,"Boolean(document.querySelector('.settings-dialog'))");
  await waitFor(win,"Boolean(document.querySelector('audio')?.readyState>=2&&!document.querySelector('audio').paused)");
  const before=await js("document.querySelector('audio').currentTime");await waitFor(win,`document.querySelector('audio').currentTime>${before+.1}`);const after=await js("document.querySelector('audio').currentTime");assert(after>before,'Piano audio did not advance');
- const audio=await js("({time:document.querySelector('audio').currentTime,error:document.querySelector('audio').error,voices:speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,local:v.localService}))})");
- await waitFor(win,"speechSynthesis.getVoices().length>0");
- audio.voices=await js("speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,local:v.localService}))");
- await click('.settings-preview');await waitFor(win,"speechSynthesis.speaking");await delay(500);audio.speechStarted=true;
- await click('.settings-preview');await waitFor(win,"!speechSynthesis.speaking");audio.speechStopped=true;
+ const audio=await js("({time:document.querySelector('audio').currentTime,error:document.querySelector('audio').error})");
  await fs.writeFile(path.join(output,'audio-review.json'),JSON.stringify(audio,null,2));
- await js("for(const key of ['music','narration']){const b=document.querySelector('[aria-labelledby=\"setting-'+key+'\"]');if(b.getAttribute('aria-checked')==='true')b.click();}");
+ await js("for(const key of ['music']){const b=document.querySelector('[aria-labelledby=\"setting-'+key+'\"]');if(b.getAttribute('aria-checked')==='true')b.click();}");
  assert(await js("document.querySelector('audio').paused"),'Music toggle did not pause playback');
  await click('.settings-close');
  for(const [w,h] of [[1672,941],[1366,768],[800,600],[390,844]]){

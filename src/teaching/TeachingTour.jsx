@@ -7,11 +7,10 @@ import {createTopologyGame} from '../topology/scene';
 import {formatWord,winding} from '../topology/math';
 import {LESSONS} from './lessons';
 import {SettingsButton,useSettingsPanel} from '../settings/Settings';
-import {useNarration,useAudioStatus} from '../audio/react';
 import './teaching.css';
 
 export function TeachingTour({lessonKey,onFinish,onHome}){
- const {isOpen:settingsOpen}=useSettingsPanel(),audio=useAudioStatus();
+ const {isOpen:settingsOpen}=useSettingsPanel();
  const locale=useLocale(),lesson=LESSONS[lessonKey],host=useRef(),engine=useRef(),pins=useRef({}),overlay=useRef();
  const [stage,setStage]=useState('welcome'),[step,setStep]=useState(0),[epoch,setEpoch]=useState(0),[game,setGame]=useState({}),[armed,setArmed]=useState(false),[gesture,setGesture]=useState(false),[error,setError]=useState(false);
  const [reduced]=useState(()=>typeof window!=='undefined'&&(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||false));
@@ -36,9 +35,9 @@ export function TeachingTour({lessonKey,onFinish,onHome}){
   window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
  },[stage,busy,armed,settingsOpen]);
  useEffect(()=>{
-  if(stage!=='watch'||reduced||busy||error||armed||settingsOpen||audio.reading)return;
+  if(stage!=='watch'||reduced||busy||error||armed||settingsOpen)return;
   const timer=setTimeout(run,1500);return()=>clearTimeout(timer);
- },[stage,step,busy,armed,error,epoch,settingsOpen,audio.reading]);
+ },[stage,step,busy,armed,error,epoch,settingsOpen]);
  useEffect(()=>{
   if(settingsOpen||!armed||busy||!['watch','practice'].includes(stage)||!current.done(game))return;
   const timer=setTimeout(()=>{
@@ -48,8 +47,6 @@ export function TeachingTour({lessonKey,onFinish,onHome}){
   },650);return()=>clearTimeout(timer);
  },[game,armed,stage,step,busy,settingsOpen]);
  function start(next){setStep(0);setArmed(false);setGesture(false);setStage(next);setEpoch(value=>value+1);}
- const spoken=stage==='welcome'?`${t(lesson.title)}。${t(lesson.principle)}`:stage==='summary'||stage==='complete'?t(lesson.principle):`${t(current.label)}。${t(current.copy)}`;
- useNarration(spoken,locale,!settingsOpen&&stage!=='paused'&&!error);
  const interactive=stage==='practice'||(stage==='watch'&&reduced),inScene=['watch','practice','paused'].includes(stage);
  let evidence=lesson.engine==='intro'?(game.aligned?'90° · ✓':'90°'):lesson.engine==='topology'?`${formatWord(game.raw||[])}  ·  n = ${winding(game.raw||[])}  ·  ${lesson.level.kind==='universal'?(game.layer??0):['Ⅰ','Ⅱ','Ⅲ'][game.layer??0]}`:lessonKey==='spatial'?`${game.position||'S'}  ·  ${['Ⅰ','Ⅱ','Ⅲ','Ⅳ'][game.view??0]}  ·  ◆ ${game.runes?.length||0}`:game.flowStatus?`f = ${game.flowStatus.value}  ·  ∂S = ${game.cutValue??0}`:lessonKey==='routes'?`${game.draft?.join(' → ')||'S'}  ·  ${game.paths?.length||0} / 2`:null;
  return <section className="teaching-overlay" ref={overlay} role="dialog" aria-modal="true" aria-labelledby="teaching-title">
