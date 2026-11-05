@@ -12,18 +12,20 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
- if(phase==='reduced')app.commandLine.appendSwitch('force-prefers-reduced-motion');
+ if(['reduced','notebook'].includes(phase))app.commandLine.appendSwitch('force-prefers-reduced-motion');
  console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged}, arch=${process.arch})`);
  if(process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH)assert.equal(process.arch,process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH);
  let win;const errors=[],failed=[];
- const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},phase==='review'?240000:90000);
+ const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},['review','notebook'].includes(phase)?340000:90000);
  try{
   await app.whenReady();registerContent();
   win=createWindow({show:process.env.CI==='true',backgroundThrottling:false,width:1672,height:941,testViewport:true});
+  win.webContents.on('render-process-gone',(_event,details)=>console.error('Renderer process exited',JSON.stringify(details)));
   win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
   win.webContents.session.webRequest.onErrorOccurred(details=>{if(details.error==='net::ERR_ABORTED'&&details.url.endsWith('/audio/bach-prelude-bwv846.mp3'))return;failed.push({url:details.url,error:details.error});});
   await once(win.webContents,'did-finish-load');
   await waitFor(win,"Boolean(document.querySelector('.opening-primary') && document.querySelector('canvas')?.width)");
+  if(phase==='notebook'){await require('./notebook-review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   if(phase==='review'){await fs.mkdir(output,{recursive:true});await require('./review.cjs').review({win,output,waitFor});assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);clearTimeout(timeout);win.destroy();app.exit(0);return;}
   const animated=await win.webContents.executeJavaScript("Boolean(document.querySelector('.opening-motion'))");
   const runtime=await win.webContents.executeJavaScript("({origin:location.origin,secure:isSecureContext,require:typeof require,process:typeof process,webgl:Boolean(document.querySelector('canvas').getContext('webgl2'))})");
@@ -77,6 +79,22 @@ async function run({registerContent,createWindow}) {
     await waitFor(win,"Boolean(document.querySelector('.journal-text-button'))");
     await win.webContents.executeJavaScript("[...document.querySelectorAll('.journal-text-button')].find(button=>button.textContent.includes('回到开场')).click()");
     await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+    await win.webContents.executeJavaScript("document.querySelector('.opening-footer .settings-trigger').click()");
+    await waitFor(win,"Boolean(document.querySelector('.save-tools-actions'))");
+    const downloads=path.join(output,'downloads');await fs.mkdir(downloads,{recursive:true});const filename=path.join(downloads,'backup.json');
+    const downloaded=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Save export did not download')),15000);win.webContents.session.once('will-download',(_event,item)=>{item.setSavePath(filename);item.once('done',(_event,state)=>{clearTimeout(timer);state==='completed'?resolve():reject(Error('Save download failed: '+state));});});});
+    await win.webContents.executeJavaScript("document.querySelector('.save-tools-actions button:first-child').click()");await downloaded;
+    const backup=JSON.parse(await fs.readFile(filename,'utf8'));assert.equal(backup.format,'math-valley-save');assert.equal(backup.version,1);assert.equal(backup.payload.profile.currentLevel,'2-01');
+    await win.webContents.executeJavaScript("document.querySelector('.settings-close').click();document.querySelector('.opening-new').click()");
+    await waitFor(win,"Boolean(document.querySelector('.opening-confirm-actions'))");await win.webContents.executeJavaScript("document.querySelector('.opening-confirm-actions .opening-plate').click()");
+    await waitFor(win,"Boolean(document.querySelector('.teaching-actions'))");await win.webContents.executeJavaScript("document.querySelector('.teaching-actions>.teaching-secondary:last-child').click()");await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+    await win.webContents.executeJavaScript("document.querySelector('.opening-footer .settings-trigger').click()");await waitFor(win,"Boolean(document.querySelector('.save-tools-actions input'))");
+    await win.webContents.executeJavaScript(`(()=>{const input=document.querySelector('.save-tools-actions input'),transfer=new DataTransfer();transfer.items.add(new File([${JSON.stringify(JSON.stringify(backup))}],'backup.json',{type:'application/json'}));input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await waitFor(win,"Boolean(document.querySelector('.save-preview'))");const reloaded=once(win.webContents,'did-finish-load');await win.webContents.executeJavaScript("document.querySelector('.save-preview button:last-child').click()");await reloaded;await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+    await win.webContents.executeJavaScript("document.querySelector('.opening-history').click()");await waitFor(win,"Boolean(document.querySelector('.opening-dialog .save-tools'))");win.show();win.focus();await win.webContents.executeJavaScript("document.getAnimations().forEach(a=>{if(Number.isFinite(a.effect.getTiming().iterations))a.finish();});new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))");await new Promise(resolve=>setTimeout(resolve,250));await fs.writeFile(path.join(output,'desktop-save-panel.png'),(await win.webContents.capturePage()).toPNG());
+    win.setMinimumSize(320,600);win.setContentSize(390,844);await new Promise(resolve=>setTimeout(resolve,250));await fs.writeFile(path.join(output,'desktop-save-panel-mobile.png'),(await win.webContents.capturePage()).toPNG());win.setContentSize(1672,941);
+    await win.webContents.executeJavaScript("document.querySelector('.opening-close').click()");
+    console.log('Portable save export, preview, archive and restore passed');
    }else{
     await waitFor(win,"document.querySelector('.compass-face span').textContent==='Ⅱ'");
     const checkpoint=await win.webContents.executeJavaScript(`new Promise((resolve,reject)=>{const r=indexedDB.open('math-valley');r.onsuccess=()=>{const db=r.result,tx=db.transaction('levels','readonly'),q=tx.objectStore('levels').get('2-01');tx.oncomplete=()=>{const value=q.result.checkpoint;db.close();resolve(value);};tx.onabort=()=>reject(tx.error);};})`);
@@ -88,7 +106,7 @@ async function run({registerContent,createWindow}) {
   const result={phase,arch:process.arch,runtime,errors,failed,persistence:phase==='create'?'created':'verified'};
   await fs.writeFile(path.join(output,`desktop-${phase}.json`),JSON.stringify(result,null,2));console.log(JSON.stringify(result));clearTimeout(timeout);win.destroy();app.exit(0);
  }catch(error){
-  console.error(error);clearTimeout(timeout);
+  console.error(error);console.error('Renderer errors:',JSON.stringify(errors));clearTimeout(timeout);
   try{await fs.mkdir(output,{recursive:true});if(win&&!win.isDestroyed()){
    await fs.writeFile(path.join(output,`desktop-${phase}-failure.png`),(await win.webContents.capturePage()).toPNG());
    const state=await win.webContents.executeJavaScript("({text:document.body.innerText,compass:document.querySelector('.compass-face span')?.textContent,buttons:[...document.querySelectorAll('button')].map(button=>({text:button.textContent,label:button.getAttribute('aria-label'),disabled:button.disabled})),hidden:document.hidden})");

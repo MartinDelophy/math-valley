@@ -4,6 +4,7 @@ import {t,useLocale} from '../i18n/react';
 import {SettingsButton,useSettingsPanel} from '../settings/Settings';
 import {useSettings} from '../settings/store';
 import {FitText} from '../FitText';
+import {SaveTools} from '../storage/SaveTools';
 import {LEVELS} from '../catalog';
 import {createOpeningScene} from './scene';
 import './opening.css';
@@ -22,10 +23,10 @@ export function OpeningPanel({kind,archives=[],busy,error,onCancel,onNew,onResto
  return <div className="opening-shade" onClick={()=>{if(!busy)onCancel();}}><section ref={box} className="opening-dialog" role={kind==='new'?'alertdialog':'dialog'} aria-modal="true" aria-labelledby="opening-dialog-title" aria-describedby="opening-dialog-description" onClick={e=>e.stopPropagation()}>
   <button className="opening-close" aria-label={t('返回开场')} disabled={busy} onClick={onCancel}><X size={23}/></button>
   <Compass size={25} weight="light" className="opening-dialog-mark"/>
-  <h2 id="opening-dialog-title">{t(kind==='new'?'开启新的旅程？':'往昔旅程')}</h2>
+  <h2 id="opening-dialog-title">{t(kind==='new'?'开启新的旅程？':'旅程存档')}</h2>
   <p id="opening-dialog-description">{t(kind==='new'?'新旅程将从序章教学开始。当前的进度会保留为备份，之后可以在“往昔旅程”中恢复。':'选择一段旅程继续。恢复时，当前旅程也会先留下备份。')}</p>
   {error&&<p className="opening-error" role="alert">{t(error)}</p>}
-  {kind==='new'?<div className="opening-confirm-actions"><button className="opening-cancel" disabled={busy} onClick={onCancel}>{t('留在当前旅程')}</button><button className="opening-plate" disabled={busy} onClick={onNew}>{t(busy?'正在准备旅程…':'保留备份并出发')}<ArrowRight size={19}/></button></div>:<div className="opening-archives">{!archives.length&&<p className="opening-empty">{t('还没有往昔旅程。开始新旅程时，当前进度会自动留作备份。')}</p>}{archives.map(archive=><button className="opening-archive" key={archive.id} disabled={busy} onClick={()=>onRestore(archive.id)} aria-label={t(`恢复旅程 · ${new Date(archive.createdAt).toLocaleString(locale)}`)}><span><small>{new Date(archive.createdAt).toLocaleString(locale)}</small><strong>{journeyLocation(archive.profile)}</strong><em>{t(`已完成 ${archive.profile.completed.filter(id=>id!=='intro').length} / ${LEVELS.length} 关`)}</em></span><ArrowRight size={23}/></button>)}</div>}
+  {kind==='new'?<div className="opening-confirm-actions"><button className="opening-cancel" disabled={busy} onClick={onCancel}>{t('留在当前旅程')}</button><button className="opening-plate" disabled={busy} onClick={onNew}>{t(busy?'正在准备旅程…':'保留备份并出发')}<ArrowRight size={19}/></button></div>:<><SaveTools/><div className="opening-archives">{!archives.length&&<p className="opening-empty">{t('还没有往昔旅程。开始新旅程时，当前进度会自动留作备份。')}</p>}{archives.map(archive=><button className="opening-archive" key={archive.id} disabled={busy} onClick={()=>onRestore(archive.id)} aria-label={t(`恢复旅程 · ${new Date(archive.createdAt).toLocaleString(locale)}`)}><span><small>{new Date(archive.createdAt).toLocaleString(locale)}</small><strong>{journeyLocation(archive.profile)}</strong><em>{t(`已完成 ${archive.profile.completed.filter(id=>LEVELS.some(level=>level.id===id)).length} / ${LEVELS.length} 关`)}</em></span><ArrowRight size={23}/></button>)}</div></>}
  </section></div>;
 }
 export function StartScreen({profile,hasJourney,archives=[],isStale=false,onContinue,onNew,onRestore,onEntered}){
@@ -56,7 +57,7 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
   }catch{setError('这次没有保存成功，原旅程仍然保留。请重试。');setDeparting(false);if(root.current)root.current.style.opacity='1';}
   finally{if(mounted.current){locked.current=false;setBusy(false);}}
  }
- const done=profile.completed.filter(id=>id!=='intro').length,current=LEVELS.find(level=>level.id===profile.currentLevel);
+ const done=profile.completed.filter(id=>LEVELS.some(level=>level.id===id)).length,current=LEVELS.find(level=>level.id===profile.currentLevel);
  const chapter=current?t(current.chapter===2?'第二章 · 回环之塔':'第一章 · 桥与连通'):t('序章 · 方向与旋转');
  return <main ref={root} className={`opening-screen ${departing?'is-departing':''}`} aria-busy={busy}>
   <div className="opening-layout" inert={Boolean(panel)||departing}>
@@ -76,7 +77,7 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
     </div>
     <footer className="opening-footer"><SettingsButton disabled={busy} withLabel/></footer>
    </div>
-   <div className="opening-utilities">{!reduced&&preferences.openingMotion&&<button className="opening-motion" aria-label={t(paused?'播放开场动画':'暂停开场动画')} title={t(paused?'播放开场动画':'暂停开场动画')} disabled={busy} onClick={()=>setPaused(value=>!value)}>{paused?<Play size={19}/>:<Pause size={19}/>}</button>}<button className="opening-history" disabled={busy} onClick={()=>{setError('');setPanel('archives');}}>{t('往昔旅程')}<ArrowRight size={22}/></button></div>
+   <div className="opening-utilities">{!reduced&&preferences.openingMotion&&<button className="opening-motion" aria-label={t(paused?'播放开场动画':'暂停开场动画')} title={t(paused?'播放开场动画':'暂停开场动画')} disabled={busy} onClick={()=>setPaused(value=>!value)}>{paused?<Play size={19}/>:<Pause size={19}/>}</button>}<button className="opening-history" disabled={busy} onClick={()=>{setError('');setPanel('archives');}}>{t('旅程存档')}<ArrowRight size={22}/></button></div>
   </div>
   {departing&&<span className="opening-status" role="status">{t('正在进入旅程…')}</span>}
   {panel&&<OpeningPanel kind={panel} archives={archives} busy={busy} error={error} onCancel={()=>{setError('');setPanel(null);}} onNew={()=>begin(onNew)} onRestore={id=>begin(()=>onRestore(id))}/>}

@@ -13,7 +13,7 @@ async function review({win,output,waitFor}){
  win.webContents.sendInputEvent({type:'mouseDown',...point,button:'left',clickCount:1});win.webContents.sendInputEvent({type:'mouseUp',...point,button:'left',clickCount:1});
  await waitFor(win,"Boolean(document.querySelector('.settings-dialog'))");
  await waitFor(win,"Boolean(document.querySelector('audio')?.readyState>=2&&!document.querySelector('audio').paused)");
- const before=await js("document.querySelector('audio').currentTime");await delay(700);const after=await js("document.querySelector('audio').currentTime");assert(after>before,'Piano audio did not advance');
+ const before=await js("document.querySelector('audio').currentTime");await waitFor(win,`document.querySelector('audio').currentTime>${before+.1}`);const after=await js("document.querySelector('audio').currentTime");assert(after>before,'Piano audio did not advance');
  const audio=await js("({time:document.querySelector('audio').currentTime,error:document.querySelector('audio').error,voices:speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,local:v.localService}))})");
  await waitFor(win,"speechSynthesis.getVoices().length>0");
  audio.voices=await js("speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,local:v.localService}))");

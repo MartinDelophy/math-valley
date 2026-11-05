@@ -40,10 +40,6 @@ jobs:
             platform: mac
             arch: arm64
             executable: release/mac-arm64/Math Valley.app/Contents/MacOS/Math Valley
-          - runner: macos-15
-            platform: mac
-            arch: x64
-            executable: release/mac/Math Valley.app/Contents/MacOS/Math Valley
           - runner: windows-2022
             platform: win
             arch: x64
@@ -64,9 +60,6 @@ jobs:
       - name: Package desktop app
         working-directory: desktop
         run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
-      - name: Verify Intel translation is available
-        if: matrix.platform == 'mac' && matrix.arch == 'x64'
-        run: arch -x86_64 /usr/bin/true
       - name: Smoke-test the packaged application
         env:
           MATH_VALLEY_SMOKE_EXPECT_ARCH: ${{ matrix.arch }}

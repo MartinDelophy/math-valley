@@ -1,8 +1,12 @@
+import {saveMessages} from './saves.js';
+import {notebookMessages} from './notebook.js';
 // Source-language keys; columns: zh-CN, en, ja, ko.
 import {teachingMessages} from './teaching.js';
 import {settingsMessages} from './settings.js';
 import {openingMessages} from './opening.js';
 export const messages=[
+ ...saveMessages,
+ ...notebookMessages,
  ...settingsMessages,
  ...openingMessages,
  ...teachingMessages,

@@ -13,3 +13,8 @@
 ## Classical piano
 
 - `public/audio/bach-prelude-bwv846.mp3` — J. S. Bach, Prelude No. 1 in C major BWV 846, piano by Kimiko Ishizaka (2015), Open Well-Tempered Clavier. Complete CC0 recording, transcoded from the original Ogg to MP3 with FFmpeg. Source and CC0 terms: `public/audio/LICENSE.txt`. Bundled locally for web and desktop playback.
+
+## Paginated notebook
+
+- `public/assets/hud/rotation-study.png` — transparent ivory bridge rotation study, generated with the built-in Image Gen tool from the selected second notebook concept. Engineering resize to 768×512, preserving alpha. Prompt: `docs/notebook-rotation-prompt.txt`.
+- The existing folded-paper frame, paper texture, action plate and Phosphor icons are reused. All editable copy, formulas, tabs and pagination remain semantic UI.

@@ -7,7 +7,7 @@ const source=process.env.SOURCE_SHA,repo=process.env.GITHUB_REPOSITORY;
 if(!/^[a-f0-9]{40}$/.test(source||'')||!repo)throw Error('Release source SHA and repository are required');
 if(tag!==`v${version}`)throw Error('Release tag does not match desktop version');
 const files=(await readdir('release')).filter(name=>/\.(dmg|zip|exe)$/.test(name)).sort();
-for(const expected of ['mac-arm64.dmg','mac-x64.dmg','windows-x64-setup.exe','windows-x64-portable.exe'])if(!files.some(file=>file.endsWith(expected)))throw Error(`Missing artifact: ${expected}`);
+for(const expected of ['mac-arm64.dmg','windows-x64-setup.exe','windows-x64-portable.exe'])if(!files.some(file=>file.endsWith(expected)))throw Error(`Missing artifact: ${expected}`);
 const sums=await Promise.all(files.map(async name=>`${createHash('sha256').update(await readFile(`release/${name}`)).digest('hex')}  ${name}`));
 await writeFile('release/SHA256SUMS.txt',sums.join('\n')+'\n');
 const notes=await readFile('docs/desktop-release-notes.md','utf8');

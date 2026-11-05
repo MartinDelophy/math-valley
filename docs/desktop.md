@@ -9,11 +9,10 @@ Get desktop packages from [GitHub Releases](https://github.com/MartinDelophy/mat
 | Platform | Package |
 | --- | --- |
 | Apple Silicon Mac, macOS 13+ | `Math-Valley-<version>-mac-arm64.dmg` |
-| Intel Mac, macOS 13+ | `Math-Valley-<version>-mac-x64.dmg` |
 | Windows 64-bit | `Math-Valley-<version>-windows-x64-setup.exe` |
 | Windows portable | `Math-Valley-<version>-windows-x64-portable.exe` |
 
-Mac ZIP archives and a SHA-256 checksum manifest are also provided. The first beta has **no Apple Developer ID notarization or Windows publisher certificate**. Mac bundles are ad-hoc signed for executable integrity; this does not make them trusted notarized releases. OS first-launch/download warnings are possible. A signed public distribution needs the appropriate signing credentials in the release pipeline.
+A Mac ZIP archive and a SHA-256 checksum manifest are also provided. The first beta has **no Apple Developer ID notarization or Windows publisher certificate**. Mac bundles are ad-hoc signed for executable integrity; this does not make them trusted notarized releases. OS first-launch/download warnings are possible. A signed public distribution needs the appropriate signing credentials in the release pipeline.
 
 ## Saves
 
@@ -51,7 +50,7 @@ On macOS, pass `--arm64` or `--x64` directly to the desktop builder when selecti
 
 ## Release workflow
 
-`Desktop release` in GitHub Actions builds both macOS architectures on Apple Silicon, and Windows x64 on Windows. Intel binaries are exercised through Rosetta because the hosted Intel VM has no usable WebGL graphics device; this does not replace testing on a physical Intel Mac. The test asserts the executable's actual process architecture. Each packaged executable is checked for bundled origin, WebGL rendering, asset loading, language changes, first teaching entry, IndexedDB persistence across separate app processes, saved layer/energy/camera restoration and reduced-motion entry. Renderer errors and failed resource requests fail the job. Only after every target passes can a draft prerelease be assembled, with SHA-256 hashes.
+`Desktop release` in GitHub Actions publishes Apple Silicon macOS and Windows x64 packages. Intel Mac packaging is available for local development, but is not part of this beta release until a separate hardware validation passes. The hosted Intel VM cannot initialize WebGL, and an attempted Rosetta integration run did not complete. The test asserts the executable's actual process architecture. Each packaged executable is checked for bundled origin, WebGL rendering, asset loading, language changes, first teaching entry, IndexedDB persistence across separate app processes, saved layer/energy/camera restoration and reduced-motion entry. Renderer errors and failed resource requests fail the job. Only after every target passes can a draft prerelease be assembled, with SHA-256 hashes.
 
 A `v<desktop/package.json version>` tag triggers this workflow. It can also run manually; choose **Create a draft** to assemble a draft with the matching version tag after validation. The tag is created at the exact workflow commit and never moved. Existing published releases are never overwritten. Publishing a draft is a separate final step.
 

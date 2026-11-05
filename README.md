@@ -18,7 +18,7 @@ A playable 3D mathematics journey. Rotate miniature architecture, traverse layer
 
 ## Desktop app
 
-[Download for macOS and Windows](https://github.com/MartinDelophy/math-valley/releases) — offline packages, the same nine-language game, and persistent local saves. Apple Silicon / Intel DMG and ZIP, Windows installer and portable EXE are available through the desktop beta release workflow. The beta is not Apple-notarized or Windows publisher-signed; desktop and browser saves are independent. See [desktop build and release notes](docs/desktop.md).
+[Download for macOS and Windows](https://github.com/MartinDelophy/math-valley/releases) — offline packages, the same nine-language game, and persistent local saves. Apple Silicon DMG and ZIP, Windows installer and portable EXE are available through the desktop beta release workflow. The beta is not Apple-notarized or Windows publisher-signed; desktop and browser saves are independent. See [desktop build and release notes](docs/desktop.md).
 
 
 ## What you can play
@@ -109,3 +109,5 @@ The checks cover authored puzzle solvability, graph and topology rules, covering
 See [localization notes](docs/localization.md) for adding a language and [asset credits](docs/assets.md) for the visual assets.
 
 This is a playable prototype. Architectural ornament and difficulty balancing remain open for refinement. The game is independently authored and is not affiliated with Monument Valley or its creators.
+
+The right-hand journal uses Observe/Reasoning tabs and paginated text, with the main action fixed below. Updates preserve progress by stable level ID. Use **Journey save** on the title screen for portable JSON backups; imported saves preserve the current journey as a backup first. See [save compatibility](docs/save-format.md).

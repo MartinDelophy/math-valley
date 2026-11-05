@@ -1,3 +1,4 @@
+import {safeLevelId,encodeSave,validateSave} from './transfer.js';
 import {isLocale} from '../i18n/languages.js';
 import {cleanPreferences} from '../settings/model.js';
 export const DATABASE_NAME='math-valley';
@@ -12,10 +13,13 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
  let db=null,opening=null,initialized=false,backend='memory',lastTime=0,stale=false,switching=false,transitionFrom=null;
  const stamp=()=>lastTime=Math.max(now(),lastTime+1);
  const identifier=()=>globalThis.crypto?.randomUUID?.()||`${stamp()}-${Math.random().toString(36).slice(2)}`;
- const defaults=()=>({schemaVersion:1,journeyId:'original',startedAt:0,currentLevel:'intro',completed:[],locale:'zh-CN',lessons:{},preferences:{},updatedAt:0});
+ const defaults=()=>({schemaVersion:1,journeyId:'original',startedAt:0,currentLevel:'intro',completed:[],locale:'zh-CN',lessons:{},preferences:{},knownLevelIds:[...levelIds],newLevelIds:[],updatedAt:0});
  function sanitize(value){
   const p=object(value)?value:{};
-  return {...defaults(),journeyId:typeof p.journeyId==='string'&&p.journeyId.length<100?p.journeyId:'original',startedAt:Number.isFinite(p.startedAt)?p.startedAt:0,currentLevel:ids.has(p.currentLevel)?p.currentLevel:'intro',completed:[...new Set(Array.isArray(p.completed)?p.completed.filter(id=>ids.has(id)):[])],locale:isLocale(p.locale)?p.locale:'zh-CN',lessons:Object.fromEntries(Object.entries(object(p.lessons)?p.lessons:{}).filter(([key,v])=>/^[a-z]+$/.test(key)&&['completed','skipped'].includes(v))),preferences:cleanPreferences(p.preferences),updatedAt:Number.isFinite(p.updatedAt)?p.updatedAt:0};
+  return {...defaults(),journeyId:typeof p.journeyId==='string'&&p.journeyId.length<100?p.journeyId:'original',startedAt:Number.isFinite(p.startedAt)?p.startedAt:0,currentLevel:ids.has(p.currentLevel)?p.currentLevel:'intro',completed:[...new Set(Array.isArray(p.completed)?p.completed.filter(safeLevelId):[])],locale:isLocale(p.locale)?p.locale:'zh-CN',lessons:Object.fromEntries(Object.entries(object(p.lessons)?p.lessons:{}).filter(([key,v])=>/^[a-z][a-z0-9_-]{0,79}$/i.test(key)&&['completed','skipped'].includes(v))),preferences:cleanPreferences(p.preferences),knownLevelIds:Array.isArray(p.knownLevelIds)?[...new Set(p.knownLevelIds.filter(safeLevelId))]:[...levelIds],newLevelIds:Array.isArray(p.newLevelIds)?[...new Set(p.newLevelIds.filter(id=>safeLevelId(id)&&!(Array.isArray(p.completed)&&p.completed.includes(id))))]:[],updatedAt:Number.isFinite(p.updatedAt)?p.updatedAt:0};
+ }
+ function reconcileCatalog(value){
+  const next=sanitize(value),known=new Set(next.knownLevelIds);next.newLevelIds=[...new Set([...next.newLevelIds,...levelIds.filter(id=>!known.has(id))])].filter(id=>id!=='intro'&&!next.completed.includes(id));next.knownLevelIds=[...new Set([...next.knownLevelIds,...levelIds])];return next;
  }
  let profile=defaults();
  function readLocal(key){try{return JSON.parse(localStorage?.getItem(key)||'null');}catch{return null;}}
@@ -29,7 +33,7 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
   for(const [key,status] of Object.entries(old?.lessons||{}))if(status==='completed')next.lessons[key]=status;
   return next;
  }
- const validRow=row=>ids.has(row?.levelId)&&row.schemaVersion===1&&object(row.checkpoint)&&Number.isFinite(row.updatedAt);
+ const validRow=row=>safeLevelId(row?.levelId)&&row.schemaVersion===1&&object(row.checkpoint)&&Number.isFinite(row.updatedAt);
  const validArchive=row=>row?.schemaVersion===1&&typeof row.id==='string'&&Number.isFinite(row.createdAt)&&object(row.profile)&&Array.isArray(row.levels)&&row.levels.every(validRow);
  const meaningful=(p,rows)=>Boolean(p.startedAt||p.currentLevel!=='intro'||p.completed.length||Object.keys(p.lessons).length||rows.some(r=>r.levelId!=='intro'||r.checkpoint.turns||r.checkpoint.won));
  function bundle(){return {schemaVersion:1,profile,levels:[...levels.values()],archives:[...archives.values()],transitionFrom};}
@@ -74,6 +78,7 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
     }
     for(const row of stored.levels)if(validRow(row)&&generation(row)===profile.journeyId&&(!levels.has(row.levelId)||row.updatedAt>=levels.get(row.levelId).updatedAt))levels.set(row.levelId,clone(row));
     for(const row of stored.archives)if(validArchive(row))archives.set(row.id,clone(row));
+    profile=reconcileCatalog(profile);
     lastTime=Math.max(profile.updatedAt,...[...levels.values()].map(row=>row.updatedAt),...[...archives.values()].map(row=>row.createdAt));backend='indexedDB';initialized=true;
     await write(stores,(tx,context)=>{
      const players=tx.objectStore('profile'),current=players.get('player');current.onsuccess=()=>{
@@ -85,7 +90,7 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
      const checkpoints=tx.objectStore('levels');for(const row of levels.values()){const request=checkpoints.get(row.levelId);request.onsuccess=()=>{if(generation(request.result)===profile.journeyId&&request.result?.updatedAt>row.updatedAt)levels.set(row.levelId,clone(request.result));else checkpoints.put(row);};}
      for(const row of archives.values())tx.objectStore('archives').put(row);
     });
-   }catch{db?.close();db=null;initialized=true;fallback();}
+   }catch{db?.close();db=null;profile=reconcileCatalog(profile);initialized=true;fallback();}
    return clone(profile);
   })();return opening;
  }
@@ -93,7 +98,7 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
   const saved=targetId?prior.find(a=>a.id===targetId):null;if(targetId&&!saved)return null;
   const all=[...prior];if(meaningful(base,rows))all.push({schemaVersion:1,id:identifier(),createdAt:stamp(),profile:clone(base),levels:clone(rows)});
   const journeyId=identifier(),updatedAt=stamp();
-  const next=sanitize({...saved?.profile,journeyId,startedAt:saved?.profile.startedAt||updatedAt,locale:base.locale,preferences:base.preferences,updatedAt});
+  const next=reconcileCatalog({...saved?.profile,journeyId,startedAt:saved?.profile.startedAt||updatedAt,locale:base.locale,preferences:base.preferences,updatedAt});
   return {schemaVersion:1,profile:next,levels:(saved?.levels||[]).map(row=>({...clone(row),journeyId,updatedAt})),archives:all,transitionFrom:base.journeyId};
  }
  async function switchJourney(targetId){
@@ -115,11 +120,21 @@ export function createSaveStore({indexedDB,localStorage,levelIds=['intro'],name=
    });
   }finally{switching=false;}
  }
+ async function importSave(value){
+  validateSave(value);await Promise.all([...pending]);if(stale||switching)return false;
+  const incoming=value.payload,expected=profile.journeyId,stampTime=stamp();
+  const imported=[...incoming.archives,{profile:incoming.profile,levels:incoming.levels,createdAt:stampTime}].map(item=>({schemaVersion:1,id:identifier(),createdAt:Number.isFinite(item.createdAt)?item.createdAt:stampTime,profile:reconcileCatalog(item.profile),levels:clone(item.levels)}));
+  const activeId=imported.at(-1).id;for(const row of imported)archives.set(row.id,row);
+  const saved=await write(['profile','archives'],(tx,context)=>{const request=tx.objectStore('profile').get('player');request.onsuccess=()=>{if(guard(request.result,expected,tx,context))for(const row of imported)tx.objectStore('archives').put(row);};});
+  if(!saved)return false;return switchJourney(activeId);
+ }
  return {
   init,profile:()=>clone(profile),level:id=>levels.has(id)?clone(levels.get(id).checkpoint):null,backend:()=>backend,isStale:()=>stale,
   hasJourney:()=>meaningful(profile,[...levels.values()]),
   archives:()=>[...archives.values()].sort((a,b)=>b.createdAt-a.createdAt).map(({id,createdAt,profile})=>({id,createdAt,profile:clone(profile)})),
-  startNewJourney:()=>switchJourney(null),restoreJourney:id=>switchJourney(id),
+  startNewJourney:()=>switchJourney(null),restoreJourney:id=>switchJourney(id),importSave,
+  async exportSave(){await Promise.all([...pending]);return encodeSave(bundle(),now());},
+  summary:()=>({updatedAt:Math.max(profile.updatedAt,...[...levels.values()].map(row=>row.updatedAt)),completed:profile.completed.filter(id=>id!=='intro'&&ids.has(id)).length,newLevels:profile.newLevelIds.filter(id=>ids.has(id)).length,archives:archives.size}),
   saveProfile(patch){
    if(stale||switching)return Promise.resolve(false);const expected=profile.journeyId;
    const change={...clone(patch),journeyId:expected,updatedAt:stamp()};profile=merge(profile,change);

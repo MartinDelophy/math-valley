@@ -22,7 +22,7 @@
 
 ## 桌面版
 
-[下载 macOS / Windows 桌面版](https://github.com/MartinDelophy/math-valley/releases)。游戏资源随应用提供，可离线游玩，保留九种语言和本机存档。提供 Apple Silicon / Intel Mac 的 DMG 与 ZIP，以及 Windows 安装版和便携版 EXE。首个测试版尚未进行 Apple 公证或 Windows 发布者签名；桌面存档与网站存档相互独立。详见[桌面构建与发布说明](docs/desktop.md)。
+[下载 macOS / Windows 桌面版](https://github.com/MartinDelophy/math-valley/releases)。游戏资源随应用提供，可离线游玩，保留九种语言和本机存档。提供 Apple Silicon Mac 的 DMG 与 ZIP，以及 Windows 安装版和便携版 EXE。首个测试版尚未进行 Apple 公证或 Windows 发布者签名；桌面存档与网站存档相互独立。详见[桌面构建与发布说明](docs/desktop.md)。
 
 
 ## 运行
@@ -75,3 +75,5 @@ npx vercel deploy --prebuilt --prod
 详细维护流程见 [部署说明](docs/deployment.md)。
 
 支持简体中文、繁體中文、English、日本語、한국어、Français、Deutsch、Español、Português。在开场齿轮或旅途菜单的设置中切换语言、音乐、讲解和动画。背景音乐为巴赫《C大调前奏曲》的 CC0 钢琴录音；讲解使用设备提供的相应语言语音，设备缺少语音时会显示提示。
+
+右侧手札采用「观察 / 论证」分页，主要操作固定在底部。更新以稳定关卡 ID 延续进度，新关卡单独提示。开场的「旅程存档」支持导出、导入 JSON 备份，恢复前自动保留当前旅程。详见[存档与更新](docs/save-format.md)。

@@ -1,10 +1,11 @@
 import { t } from './i18n/react';
 import { useState,useEffect } from 'react';
-import { List,ArrowArcLeft,ArrowArcRight,ArrowUUpLeft,BookOpen,Diamond,Lightning,CaretDoubleRight,CaretDoubleLeft,ArrowRight,Cube,Minus,Plus } from '@phosphor-icons/react';
+import { List,ArrowArcLeft,ArrowArcRight,ArrowUUpLeft,Diamond,Lightning,CaretDoubleRight,CaretDoubleLeft,ArrowRight,Minus,Plus } from '@phosphor-icons/react';
 import { usable } from './chapter/spatial';
 import { modeLabels } from './chapter/levels';
 import './folded-hud.css';
 import { TopologyContent } from './topology/TopologyContent';
+import {Notebook,PrinciplePages} from './notebook/Notebook';
 
 const romans=['Ⅰ','Ⅱ','Ⅲ','Ⅳ'];
 const galleryNames={CX:'侧廊',CE:'高廊',AK:'外廊',AD:'中庭',FJ:'回廊',FT:'归途'};
@@ -54,25 +55,27 @@ export function FoldedHud({intro,level:L,game:g,engine,open,paperOpen,setPaperOp
   <aside className={`folded-paper ${paperOpen?'is-open':''}`} aria-label={t("旅途手札")} inert={Boolean(shown)}>
    <img className="paper-art" src="/assets/hud/folded-paper.png" alt="" draggable="false"/>
    <button className="paper-tab" aria-label={t(paperOpen?'收起旅途手札':'展开旅途手札')} aria-expanded={paperOpen} onClick={()=>setPaperOpen(!paperOpen)}>{t(paperOpen?<CaretDoubleRight size={23}/>:<CaretDoubleLeft size={23}/>)}<span>{t("手札")}</span></button>
-   {t(L?.chapter===2?<TopologyContent level={L} game={g} engine={engine} open={open} paperOpen={paperOpen}/>:<div className={`paper-content ${!spatial&&!intro?'math-paper':''}`} inert={!paperOpen}>
-    <div className="paper-heading">{t("当前目标")}</div><h2 className={`paper-goal ${spatial||intro?'compact-goal':''}`} title={t(L?.goal)}>{t(goal)}</h2>
-    <div className="paper-stats"><span><Diamond weight="duotone" size={27}/><b>{t(statusA)}</b></span><i/><span>{t(spatial&&<Lightning size={28} weight="fill"/>)}<b>{t(statusB)}</b></span></div>
-    <div className="paper-context">
-     <h3>{t(contextTitle)}</h3><p className="context-copy">{t(g.walking?'正在通路间行走…':contextCopy)}</p>
-     {t(spatial&&missing.length>0&&<p className="paper-constraint">{t("需要印记：")}{t(missing.join('、'))}</p>)}
-     {t(L?.mode==='mst'&&<p className="paper-constraint">{t("已保留")}{t(Object.values(g.active||{}).filter(Boolean).length)} / {t(L.nodes.length-1)}{t("座桥")}{t(L.required&&<><br/>{t("必留桥梁：")}{t(L.required.join('、'))}</>)}</p>)}
-     {t(L?.mode==='repair'&&<p className="paper-constraint">{t("备用桥")}{t(L.edges.filter(e=>e.on===false&&g.active?.[e.id]).length)} / {t(L.maxAdded)}</p>)}
-     {t(flow&&L.mode==='flowcut'&&<div className="paper-segment"><button aria-pressed={!cut} onClick={()=>run('setInteraction','flow')}>{t("调节流量")}</button><button aria-pressed={cut} onClick={()=>run('setInteraction','cut')}>{t("标记割")}</button></div>)}
-     {t(L?.mode==='flowcut'&&<p className="paper-constraint">{t("流值")}{t(g.flowStatus?.value??0)}{t("· 割容量")}{t(g.cutValue??0)}</p>)}
-     {t(flow&&!cut&&selected&&<div className="paper-gate"><button aria-label={t("选中闸门减少1")} disabled={busy} onClick={()=>run('adjust',-1)}><Minus size={18}/></button><span>{t(g.flow?.[selected.id]||0)} / {t(selected.cap)}</span><button aria-label={t("选中闸门增加1")} disabled={busy} onClick={()=>run('adjust',1)}><Plus size={18}/></button></div>)}
-     {t(route&&<p className="paper-route">{t(g.draft?.join(' → ')||'S')}</p>)}
-     {t(primary&&<button className="paper-primary" disabled={busy||primary.disabled} onClick={primary.action}>{t(g.walking?'旅途中…':primary.label)}</button>)}
-     {t(spatial&&(group||portals.length>0)&&<button className="paper-text" aria-expanded={routesOpen} onClick={()=>setRoutesOpen(!routesOpen)}>{t(routesOpen?'收起其他通路':'查看其他通路')}<ArrowRight size={13}/></button>)}
-     {t(spatial&&routesOpen&&<div className="paper-routes">{t(adjacent.map(n=><button key={n.id} disabled={busy} onClick={()=>{run('node',n.id);setRoutesOpen(false);}}>{t("前往")}{t(n.id)}<ArrowRight size={15}/></button>))}{t(portals.map(p=><button key={p.id} disabled={busy} onClick={()=>p.view===g.view?run('enterPortal',p.id):run('setView',p.view)}>{t(p.view===g.view?'进入穿越门':`对齐至${romans[p.view]}侧`)}<ArrowRight size={15}/></button>))}</div>)}
-     {t(g.feedback&&(!spatial||g.tested||! /^(已抵达|取得|联动 |沿实体|空间对齐|位于 )/.test(g.feedback))&&<p className={`paper-feedback ${g.tested?'is-tested':''}`} role="status">{t(g.feedback)}</p>)}
-    </div>
-    <div className="paper-bottom"><p><Cube size={26} weight="light"/><span>{t(preview)}</span></p><button className="paper-book" onClick={()=>open('principle')}><BookOpen size={28} weight="light"/>{t("原理手记")}</button></div>
-   </div>)}
+   {L?.chapter===2?<TopologyContent level={L} game={g} engine={engine} open={open} paperOpen={paperOpen}/>:<div className="notebook-host" inert={!paperOpen}>
+    <Notebook kicker={intro?'序章 · 方向与旋转':`${t('第一章')} · ${L.displayId||L.id}`} goal={goal} goalLines={intro?['方向改变','长度不变']:undefined} resetKey={`${intro?'intro':L.id}:${g.phase||0}`} action={()=>{if(primary)primary.action();}} actionLabel={g.walking?'旅途中…':primary?.label||'检验旅程'} disabled={busy||primary?.disabled} onPrinciple={()=>open('principle')} feedbackKey={g.tested?g.feedback:''} actionTab={spatial&&!group&&adjacent.length>1?'observe':undefined}
+     stats={<><span><Diamond size={21} weight="light"/><b>{t(statusA)}</b></span><i/><span>{spatial&&<Lightning size={20} weight="light"/>}<b>{t(intro?'一整圈的四分之一':statusB)}</b></span></>}
+     prove={<PrinciplePages principles={intro?[['中心固定','桥围绕同一个固定点转动。'],['转过一个直角','90° 是一整圈的四分之一。'],['形状与大小不变','每一点到中心的距离始终不变。']]:L.principles}/>}
+     observe={<>
+      {g.tested&&g.feedback&&<article className="notebook-leaf"><h3>{t('数学线索')}</h3><p role="status">{t(g.feedback)}</p></article>}
+      {intro?<><article className="notebook-leaf"><h3>{t('什么保持不变？')}</h3><p>{t('桥梁围绕固定中心转动，每一点到中心的距离保持不变。')}</p><img className="notebook-diagram" src="/assets/hud/rotation-study.png" alt=""/><p className="notebook-formula">|R(v)| = |v|</p></article><article className="notebook-leaf"><h3>{t(contextTitle)}</h3><p>{t(g.walking?'正在通路间行走…':contextCopy)}</p><p>{t('转动后，长度与形状都保持不变。')}</p><p className="notebook-formula">90° = ¼ × 360°</p></article></>:<>
+      <article className="notebook-leaf"><h3>{t(contextTitle)}</h3><p>{t(g.walking?'正在通路间行走…':contextCopy)}</p>
+       {spatial&&missing.length>0&&<p className="paper-constraint">{t('需要印记：')}{missing.join('、')}</p>}
+       {L?.mode==='mst'&&<p className="paper-constraint">{t('已保留')}{Object.values(g.active||{}).filter(Boolean).length} / {L.nodes.length-1}{t('座桥')}{L.required&&<><br/>{t('必留桥梁：')}{L.required.join('、')}</>}</p>}
+       {L?.mode==='repair'&&<p className="paper-constraint">{t('备用桥')}{L.edges.filter(e=>e.on===false&&g.active?.[e.id]).length} / {L.maxAdded}</p>}
+       {flow&&L.mode==='flowcut'&&<div className="paper-segment"><button aria-pressed={!cut} onClick={()=>run('setInteraction','flow')}>{t('调节流量')}</button><button aria-pressed={cut} onClick={()=>run('setInteraction','cut')}>{t('标记割')}</button></div>}
+       {L?.mode==='flowcut'&&<p className="paper-constraint">{t('流值')}{g.flowStatus?.value??0} · {t('割容量')}{g.cutValue??0}</p>}
+       {flow&&!cut&&selected&&<div className="paper-gate"><button aria-label={t('选中闸门减少1')} disabled={busy} onClick={()=>run('adjust',-1)}><Minus size={18}/></button><span>{g.flow?.[selected.id]||0} / {selected.cap}</span><button aria-label={t('选中闸门增加1')} disabled={busy} onClick={()=>run('adjust',1)}><Plus size={18}/></button></div>}
+       {route&&<p className="paper-route">{g.draft?.join(' → ')||'S'}</p>}
+       {spatial&&(group||portals.length>0)&&<button className="paper-text" aria-expanded={routesOpen} onClick={()=>setRoutesOpen(!routesOpen)}>{t(routesOpen?'收起其他通路':'查看其他通路')}<ArrowRight size={13}/></button>}
+       {spatial&&routesOpen&&<div className="paper-routes">{adjacent.map(n=><button key={n.id} disabled={busy} onClick={()=>{run('node',n.id);setRoutesOpen(false);}}>{t('前往')}{n.id}<ArrowRight size={15}/></button>)}{portals.map(p=><button key={p.id} disabled={busy} onClick={()=>p.view===g.view?run('enterPortal',p.id):run('setView',p.view)}>{t(p.view===g.view?'进入穿越门':`对齐至${romans[p.view]}侧`)}<ArrowRight size={15}/></button>)}</div>}
+      </article><article className="notebook-leaf"><h3>{t('数学线索')}</h3><p>{t(preview)}</p><p>{t(L.hint)}</p></article></>}
+     </>}/>
+   </div>}
+
   </aside>
  </>;
 }

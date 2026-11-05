@@ -10,6 +10,7 @@ files:
   - protocol.cjs
   - smoke.cjs
   - review.cjs
+  - notebook-review.cjs
   - package.json
 extraResources:
   - from: ../dist/client
