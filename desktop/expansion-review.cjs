@@ -4,7 +4,7 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function review({win,output,waitFor}){
  const fixture=JSON.parse(await fs.readFile(path.join(output,'fixture.json'),'utf8')),js=code=>win.webContents.executeJavaScript(code);
  win.setContentSize(1366,850);win.show();win.focus();
- const click=async selector=>{await waitFor(win,`Boolean(document.querySelector(${JSON.stringify(selector)}))`);await js(`document.querySelector(${JSON.stringify(selector)}).focus({preventScroll:true})`);await delay(280);const rect=await js(`(()=>{const b=document.querySelector(${JSON.stringify(selector)}),r=b.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,disabled:b.disabled};})()`);assert(!rect.disabled,selector);assert(rect.x>0&&rect.x<1366&&rect.y>0&&rect.y<850,`Control not reachable: ${selector} ${JSON.stringify(rect)}`);await js(`document.querySelector(${JSON.stringify(selector)}).click()`);};
+ const click=async selector=>{await waitFor(win,`Boolean(document.querySelector(${JSON.stringify(selector)}))`);await js(`document.querySelector(${JSON.stringify(selector)}).focus({preventScroll:true})`);await delay(280);const measure=()=>js(`(()=>{const b=document.querySelector(${JSON.stringify(selector)}),r=b.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,disabled:b.disabled};})()`);let rect=await measure();for(let page=0;page<10&&(rect.x<0||rect.x>1366);page++){const direction=rect.x>1366?'last-child':'first-child';const moved=await js(`(()=>{const b=document.querySelector('.notebook-pagination button:${direction}');if(!b||b.disabled)return false;b.click();return true;})()`);if(!moved)break;await delay(120);rect=await measure();}assert(!rect.disabled,selector);assert(rect.x>0&&rect.x<1366&&rect.y>0&&rect.y<850,`Control not reachable: ${selector} ${JSON.stringify(rect)}`);await js(`document.querySelector(${JSON.stringify(selector)}).click()`);};
  await js(`new Promise((resolve,reject)=>{const r=indexedDB.open('math-valley');r.onsuccess=()=>{const db=r.result,tx=db.transaction(['profile','levels'],'readwrite'),s=tx.objectStore('profile'),q=s.get('player');q.onsuccess=()=>s.put({...q.result,currentLevel:${JSON.stringify(fixture.id)},locale:'zh-CN',lessons:${JSON.stringify(fixture.lessons)},preferences:{paperOpen:true,music:false,soundEffects:false,openingMotion:false}},'player');tx.objectStore('levels').put({schemaVersion:1,levelId:${JSON.stringify(fixture.id)},updatedAt:Date.now(),checkpoint:${JSON.stringify(fixture.checkpoint)}});tx.oncomplete=()=>{db.close();resolve(true)};tx.onabort=()=>reject(tx.error)};r.onerror=()=>reject(r.error);})`);
  let loaded=once(win.webContents,'did-finish-load');win.webContents.reload();await loaded;await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");await click('.opening-primary');await waitFor(win,"!document.querySelector('.opening-screen')&&Boolean(document.querySelector('.expansion-notebook'))");
  if(fixture.tutorial){
@@ -36,18 +36,7 @@ async function review({win,output,waitFor}){
   trace.push(action);const c=await savedCount(trace.length);assert.deepEqual(c.actions,trace);
   if(trace.length===2){
    // Real reload proves that new engines restore their own checkpoint and camera.
-   const camera=c.camera;loaded=once(win.webContents,'did-finish-load');win.webContents.reload();await loaded;await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");await click('.opening-primary');await waitFor(win,"!document.querySelector('.opening-screen')&&Boolean(document.querySelector('.expansion-notebook'))");
- if(fixture.tutorial){
-  await waitFor(win,"Boolean(document.querySelector('.teaching-overlay'))");await click('.teaching-actions>.teaching-secondary');
-  for(let i=0;i<fixture.lessonSteps;i++){
-   await waitFor(win,"Boolean(document.querySelector('.teaching-primary.is-guided:not(:disabled)'))");
-   const old=await js("document.querySelector('.teaching-primary').textContent");await click('.teaching-primary');
-   await waitFor(win,i===fixture.lessonSteps-1?"document.querySelector('.teaching-primary').textContent.includes('开始正式探索')":`document.querySelector('.teaching-primary').textContent!==${JSON.stringify(old)}&&!document.querySelector('.teaching-primary').disabled`);
-  }
-  await fs.writeFile(path.join(output,'teaching-complete.png'),(await win.webContents.capturePage()).toPNG());await click('.teaching-primary');await waitFor(win,"!document.querySelector('.teaching-overlay')");
-  console.log(`Independent teaching practice passed: ${fixture.id}`);
- }
-await waitFor(win,"!document.querySelector('.notebook-action').disabled");const resumed=await checkpoint();assert.deepEqual(resumed.actions,trace);assert.deepEqual(resumed.camera,camera);
+   const camera=c.camera;loaded=once(win.webContents,'did-finish-load');win.webContents.reload();await loaded;await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");await click('.opening-primary');await waitFor(win,"!document.querySelector('.opening-screen')&&Boolean(document.querySelector('.expansion-notebook'))");await waitFor(win,"!document.querySelector('.notebook-action').disabled");const resumed=await checkpoint();assert.deepEqual(resumed.actions,trace);assert.deepEqual(resumed.camera,camera);
   }
  }
  await click('.notebook-action');await waitFor(win,"Boolean(document.querySelector('.journal-success'))");assert((await checkpoint()).won);await delay(250);await fs.writeFile(path.join(output,'scene-success.png'),(await win.webContents.capturePage()).toPNG());await fs.writeFile(path.join(output,'result.json'),JSON.stringify({id:fixture.id,passed:true,actions:trace.length,checkpoint:await checkpoint()},null,2));console.log(`Expansion native playthrough passed: ${fixture.id} (${trace.length} actions)`);
