@@ -1,4 +1,8 @@
 export const openingMessages=`
+暂停开场动画|Pause opening animation|タイトルの動きを止める|시작 화면 애니메이션 일시 정지
+播放开场动画|Play opening animation|タイトルの動きを再生|시작 화면 애니메이션 재생
+正在进入旅程…|Entering your journey…|旅へ入っています…|여행으로 들어가는 중…
+正在进入…|Entering…|移動中…|입장 중…
 旅程的起点|The journey begins|旅のはじまり|여행의 시작
 观察 · 思考 · 发现|Observe · Think · Discover|観察・思考・発見|관찰 · 생각 · 발견
 一场数学的漫游|A mathematical journey|数学をめぐる旅|수학을 탐험하는 여정

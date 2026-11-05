@@ -12,20 +12,23 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
+ if(phase==='reduced')app.commandLine.appendSwitch('force-prefers-reduced-motion');
  console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged})`);
  let win;const errors=[],failed=[];
  const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},60000);
  try{
   await app.whenReady();registerContent();
-  win=createWindow({show:false,backgroundThrottling:false});
+  win=createWindow({show:false,backgroundThrottling:false,width:1672,height:941,testViewport:true});
   win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
   win.webContents.session.webRequest.onErrorOccurred(details=>failed.push({url:details.url,error:details.error}));
   await once(win.webContents,'did-finish-load');
   await waitFor(win,"Boolean(document.querySelector('.opening-primary') && document.querySelector('canvas')?.width)");
+  const animated=await win.webContents.executeJavaScript("Boolean(document.querySelector('.opening-motion'))");
   const runtime=await win.webContents.executeJavaScript("({origin:location.origin,secure:isSecureContext,require:typeof require,process:typeof process,webgl:Boolean(document.querySelector('canvas').getContext('webgl2'))})");
   assert.equal(runtime.origin,'math-valley://app');assert.equal(runtime.secure,true);assert.equal(runtime.require,'undefined');assert.equal(runtime.process,'undefined');assert.equal(runtime.webgl,true);
+  if(phase==='reduced'){assert.equal(animated,false);assert(await win.webContents.executeJavaScript("matchMedia('(prefers-reduced-motion: reduce)').matches"));}
   const saved=await win.webContents.executeJavaScript(`new Promise((resolve,reject)=>{const r=indexedDB.open('math-valley-desktop-smoke',1);r.onupgradeneeded=()=>r.result.createObjectStore('probe');r.onerror=()=>reject(r.error);r.onsuccess=()=>{const db=r.result,tx=db.transaction('probe',${phase==='create'?"'readwrite'":"'readonly'"});const request=${phase==='create'?"tx.objectStore('probe').put('persists-across-app-processes','key')":"tx.objectStore('probe').get('key')"};tx.oncomplete=()=>{const value=request.result;db.close();resolve(value);};tx.onabort=()=>reject(tx.error);};})`);
-  if(phase==='verify'){assert.equal(saved,'persists-across-app-processes');assert.equal(await win.webContents.executeJavaScript("document.querySelector('.opening-primary').textContent"),'继续旅程');}
+  if(phase!=='create'){assert.equal(saved,'persists-across-app-processes');assert.equal(await win.webContents.executeJavaScript("document.querySelector('.opening-primary').textContent"),'继续旅程');}
   // Capture after the first completed frame and all local textures have loaded.
   await new Promise(resolve=>setTimeout(resolve,1800));
   const image=await win.webContents.capturePage();assert(!image.isEmpty());
@@ -33,14 +36,46 @@ async function run({registerContent,createWindow}) {
   assert(colorful>20,'3D ivory architecture did not render');
   await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(output,`desktop-${phase}.png`),image.toPNG());
   if(phase==='create'){
+   if(animated){
+    await new Promise(resolve=>setTimeout(resolve,800));const moving=await win.webContents.capturePage();assert(!moving.toPNG().equals(image.toPNG()),'The opening did not rotate');
+    await win.webContents.executeJavaScript("document.querySelector('.opening-motion').click()");await new Promise(resolve=>setTimeout(resolve,200));
+    const still=await win.webContents.capturePage();await new Promise(resolve=>setTimeout(resolve,500));assert((await win.webContents.capturePage()).toPNG().equals(still.toPNG()),'The pause control did not stop rotation');
+    await win.webContents.executeJavaScript("document.querySelector('.opening-motion').click()");
+   }
    for(const locale of ['en','ja','ko','zh-CN']){await win.webContents.executeJavaScript(`document.querySelector('.language-picker button[lang="${locale}"]').click()`);await waitFor(win,`document.documentElement.lang==="${locale}"`);}
    await win.webContents.executeJavaScript("document.querySelector('.opening-primary').click()");
+   if(animated){await waitFor(win,"Boolean(document.querySelector('.is-departing'))");await new Promise(resolve=>setTimeout(resolve,650));await fs.writeFile(path.join(output,'desktop-entry.png'),(await win.webContents.capturePage()).toPNG());}
    await waitFor(win,"Boolean(document.querySelector('.teaching-tour') || document.querySelector('[aria-labelledby=\"teaching-title\"]'))");
    await win.webContents.executeJavaScript("[...document.querySelectorAll('button')].find(button=>button.textContent==='回到开场').click()");
    await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+   // Isolated profile fixture matching the approved returning-player mock.
+   await win.webContents.executeJavaScript(`new Promise((resolve,reject)=>{const r=indexedDB.open('math-valley');r.onsuccess=()=>{const db=r.result,tx=db.transaction('profile','readwrite'),store=tx.objectStore('profile'),p=store.get('player');p.onsuccess=()=>store.put({...p.result,currentLevel:'2-01',completed:['intro','2-02'],updatedAt:Date.now()},'player');tx.oncomplete=()=>{db.close();resolve(true);};tx.onabort=()=>reject(tx.error);};r.onerror=()=>reject(r.error);})`);
+  }
+  if(phase==='verify'||phase==='reduced'){
+   await win.webContents.executeJavaScript("document.querySelector('.opening-primary').click()");
+   await waitFor(win,"!document.querySelector('.opening-screen') && Boolean(document.querySelector('.game-shell'))");
+   await new Promise(resolve=>setTimeout(resolve,300));
+   if(phase==='verify'){
+    await win.webContents.executeJavaScript("document.querySelector('[aria-label=\"跳过本次教学\"]')?.click()");
+    await waitFor(win,"Boolean(document.querySelector('.paper-primary')) && !document.querySelector('.paper-primary').disabled && !document.querySelector('[aria-labelledby=\"teaching-title\"]')");
+    await win.webContents.executeJavaScript("document.querySelector('.paper-primary').click()");
+    await waitFor(win,"document.querySelector('.paper-primary').disabled");
+    await waitFor(win,"!document.querySelector('.paper-primary').disabled");
+    await win.webContents.executeJavaScript("document.querySelector('[aria-label=\"向右切换视角 E\"]').click()");
+    await waitFor(win,"document.querySelector('.compass-face span').textContent==='Ⅱ'");
+    await win.webContents.executeJavaScript("document.querySelector('.quiet-menu').click()");
+    await waitFor(win,"Boolean(document.querySelector('.journal-text-button'))");
+    await win.webContents.executeJavaScript("[...document.querySelectorAll('.journal-text-button')].find(button=>button.textContent.includes('回到开场')).click()");
+    await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+   }else{
+    await waitFor(win,"document.querySelector('.compass-face span').textContent==='Ⅱ'");
+    const checkpoint=await win.webContents.executeJavaScript(`new Promise((resolve,reject)=>{const r=indexedDB.open('math-valley');r.onsuccess=()=>{const db=r.result,tx=db.transaction('levels','readonly'),q=tx.objectStore('levels').get('2-01');tx.oncomplete=()=>{const value=q.result.checkpoint;db.close();resolve(value);};tx.onabort=()=>reject(tx.error);};})`);
+    assert.equal(checkpoint.state.layer,1);assert.equal(checkpoint.state.energy,1);assert.equal(checkpoint.camera.index,1);
+    await fs.writeFile(path.join(output,'desktop-resumed-game.png'),(await win.webContents.capturePage()).toPNG());
+   }
   }
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
-  const result={phase,runtime,errors,failed,persistence:phase==='verify'?'verified':'created'};
+  const result={phase,runtime,errors,failed,persistence:phase==='create'?'created':'verified'};
   await fs.writeFile(path.join(output,`desktop-${phase}.json`),JSON.stringify(result,null,2));console.log(JSON.stringify(result));clearTimeout(timeout);win.destroy();app.exit(0);
  }catch(error){console.error(error);clearTimeout(timeout);win?.destroy();app.exit(1);}
 }

@@ -13,8 +13,8 @@ function registerContent() {
   ses.webRequest.onBeforeRequest((details,reply)=>reply({cancel:!isAppURL(details.url) && !details.url.startsWith('data:') && !details.url.startsWith('blob:')}));
 }
 function openLink(url) { if (LINKS.has(url)) shell.openExternal(url); }
-function createWindow({show=true,backgroundThrottling=true}={}) {
-  const win = new BrowserWindow({width:1440,height:900,minWidth:800,minHeight:600,show:false,title:APP_NAME,backgroundColor:'#35264f',autoHideMenuBar:process.platform!=='darwin',webPreferences:{backgroundThrottling,nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,webviewTag:false}});
+function createWindow({show=true,backgroundThrottling=true,width=1440,height=900,testViewport=false}={}) {
+  const win = new BrowserWindow({width,height,useContentSize:testViewport,enableLargerThanScreen:testViewport,minWidth:800,minHeight:600,show:false,title:APP_NAME,backgroundColor:'#35264f',autoHideMenuBar:process.platform!=='darwin',webPreferences:{backgroundThrottling,nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,webviewTag:false}});
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
   win.webContents.on('will-navigate',(event,url)=>{if(!isAppURL(url))event.preventDefault();});
   win.webContents.on('will-redirect',(event,url)=>{if(!isAppURL(url))event.preventDefault();});

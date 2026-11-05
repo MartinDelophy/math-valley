@@ -3,14 +3,16 @@ import {makeStage} from '../chapter/scene-kit';
 import {buildTopologyModel} from '../topology/model';
 import {initialTopologyState} from '../topology/math';
 import {TOPOLOGY_LEVELS} from '../topology/levels';
+import {createOpeningMotion} from './motion';
 
 // A title-screen diorama: real chapter geometry, with no game actions or save
 // callbacks. Its own camera framing never changes the playable chapter cameras.
-export function createOpeningScene(host){
+export function createOpeningScene(host,{reduced=false,onFade=()=>{}}={}){
  const K=makeStage(host),model=buildTopologyModel(K,TOPOLOGY_LEVELS[0],()=>{});
  model.update(initialTopologyState(TOPOLOGY_LEVELS[0]));
  K.restoreView({index:0,overhead:false,zoom:1.1});
- let frame,disposed=false,dirty=true;
+ let frame,disposed=false,dirty=true,lastTime=0,lastRender=0;
+ const motion=createOpeningMotion({reduced});let sample=motion.step(0),frustum;
  const floor=K.ground,original=floor.material;
  const texture=new THREE.TextureLoader().load('/assets/opening/plum-ground.jpg',()=>{dirty=true;});
  texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(13,13);texture.anisotropy=4;
@@ -31,8 +33,16 @@ export function createOpeningScene(host){
  K.world.updateMatrixWorld(true);
  const target=new THREE.Box3().setFromObject(K.world).getCenter(new THREE.Vector3());
  const point=new THREE.Vector3(),low=new THREE.Vector3(),high=new THREE.Vector3();
+ function frameCamera(){
+  if(!frustum)return;const {cx,cy,W,H}=frustum,t=sample.travel;
+  const focus=target.clone().lerp(new THREE.Vector3(-2.55,1.8,2.55),t);
+  K.camera.position.copy(focus).add(new THREE.Vector3(-22+11*t,13-9.2*t,22-11*t));K.camera.lookAt(focus);
+  Object.assign(K.camera,{left:cx*(1-t)-W/2,right:cx*(1-t)+W/2,top:cy*(1-t)+H/2,bottom:cy*(1-t)-H/2,zoom:1+3.6*t});
+  K.camera.updateProjectionMatrix();K.camera.updateMatrixWorld();
+ }
  function fit(){
   const w=host.clientWidth,h=host.clientHeight,aspect=w/h,mobile=w<=680;
+  const rotation=K.world.rotation.y;K.world.rotation.y=0;K.world.updateMatrixWorld(true);
   K.camera.position.copy(target).add(new THREE.Vector3(-22,13,22));K.camera.lookAt(target);K.camera.updateMatrixWorld();
   low.set(Infinity,Infinity,0);high.set(-Infinity,-Infinity,0);
   // Fit real vertices: circular galleries have much tighter projected bounds
@@ -41,10 +51,20 @@ export function createOpeningScene(host){
   const region=mobile?{width:.93,height:.92,x:.5,y:.49}:{width:.585,height:.92,x:.675,y:.475};
   const H=Math.max((high.y-low.y)/region.height,(high.x-low.x)/(aspect*region.width)),W=H*aspect;
   const cx=(high.x+low.x)/2-(2*region.x-1)*W/2,cy=(high.y+low.y)/2-(1-2*region.y)*H/2;
-  Object.assign(K.camera,{left:cx-W/2,right:cx+W/2,top:cy+H/2,bottom:cy-H/2});K.camera.updateProjectionMatrix();dirty=true;
+  frustum={cx,cy,W,H};K.world.rotation.y=rotation;K.world.updateMatrixWorld(true);frameCamera();dirty=true;
  }
  const observer=new ResizeObserver(fit);observer.observe(host);fit();
- function update(){if(disposed)return;frame=requestAnimationFrame(update);if(dirty||K.takeDirty()){K.renderer.render(K.scene,K.camera);dirty=false;}}
+ function update(now){
+  if(disposed)return;frame=requestAnimationFrame(update);
+  const before=sample.angle;sample=motion.step(lastTime?now-lastTime:0,!document.hidden);lastTime=now;
+  const changed=before!==sample.angle||sample.entering;
+  if(document.hidden)return;
+  // Idle rotation is deliberately capped at 30 fps; the short camera move uses
+  // the display refresh rate. Idle and entry never call gameplay/save code.
+  if(!sample.entering&&!dirty&&now-lastRender<32)return;
+  if(changed||dirty||K.takeDirty()){K.world.rotation.y=sample.angle;K.world.updateMatrixWorld(true);frameCamera();K.renderer.render(K.scene,K.camera);lastRender=now;dirty=false;}
+  if(sample.entering)onFade(sample.fade);
+ }
  frame=requestAnimationFrame(update);
- return {dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();texture.dispose();K.dispose();}};
+ return {enter:()=>motion.enter(),pause:value=>motion.pause(value),reduce:value=>motion.reduce(value),dispose(){disposed=true;motion.dispose();cancelAnimationFrame(frame);observer.disconnect();texture.dispose();K.dispose();}};
 }

@@ -1,6 +1,6 @@
 # Desktop builds
 
-Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The four languages, teaching examples, 28 puzzles and local journey backups are shared with the web version.
+Math Valley uses a small Electron shell around the same bundled React/Three.js game. All game resources ship in the application, so play needs neither a server nor a Python/Node installation. The four languages, teaching examples, 28 puzzles and local journey backups are shared with the web version. The opening rotates slowly, can be paused, and pushes the camera into the cloister before revealing a resumed game. Reduced-motion settings stop idle rotation and use a brief dissolve.
 
 ## Downloads
 
@@ -51,7 +51,7 @@ On macOS, pass `--arm64` or `--x64` directly to the desktop builder when selecti
 
 ## Release workflow
 
-`Desktop release` in GitHub Actions builds on macOS ARM64, macOS Intel and Windows x64. Each native runner smoke-tests its packaged executable: bundled origin, WebGL frame, asset loading, language changes, first teaching entry, and IndexedDB persistence across two separate app processes. Renderer errors and failed resource requests fail the job. Only after every platform passes can a draft prerelease be assembled, with SHA-256 hashes.
+`Desktop release` in GitHub Actions builds on macOS ARM64, macOS Intel and Windows x64. Each native runner smoke-tests its packaged executable: bundled origin, WebGL frame, asset loading, language changes, first teaching entry, and IndexedDB persistence across separate app processes, plus saved layer/energy/camera restoration and reduced-motion entry. Renderer errors and failed resource requests fail the job. Only after every platform passes can a draft prerelease be assembled, with SHA-256 hashes.
 
 A `v<desktop/package.json version>` tag triggers this workflow. It can also run manually; choose **Create a draft** to assemble a draft with the matching version tag after validation. The tag is created at the exact workflow commit and never moved. Existing published releases are never overwritten. Publishing a draft is a separate final step.
 
