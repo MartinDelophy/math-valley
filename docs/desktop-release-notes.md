@@ -1,8 +1,8 @@
 First Math Valley desktop beta: the same 28 mathematical puzzles, four languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
 
 下载 / Downloads:
-- **macOS Apple Silicon (M1/M2/M3/M4 and later):** `mac-arm64.dmg`
-- **macOS Intel:** `mac-x64.dmg`
+- **macOS 13+ Apple Silicon (M1/M2/M3/M4 and later):** `mac-arm64.dmg`
+- **macOS 13+ Intel:** `mac-x64.dmg`
 - **Windows 64-bit installer:** `windows-x64-setup.exe`
 - **Windows 64-bit portable:** `windows-x64-portable.exe`
 - Mac ZIP archives and `SHA256SUMS.txt` are also included.

@@ -12,12 +12,13 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
+ console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged})`);
  let win;const errors=[],failed=[];
  const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},60000);
  try{
   await app.whenReady();registerContent();
   win=createWindow({show:false,backgroundThrottling:false});
-  win.webContents.on('console-message',(_event,details,...rest)=>{const level=typeof details==='object'?details.level:details;const message=typeof details==='object'?details.message:rest[0];if(level==='error'||level===3)errors.push(message);});
+  win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
   win.webContents.session.webRequest.onErrorOccurred(details=>failed.push({url:details.url,error:details.error}));
   await once(win.webContents,'did-finish-load');
   await waitFor(win,"Boolean(document.querySelector('.opening-primary') && document.querySelector('canvas')?.width)");
@@ -28,7 +29,7 @@ async function run({registerContent,createWindow}) {
   // Capture after the first completed frame and all local textures have loaded.
   await new Promise(resolve=>setTimeout(resolve,1800));
   const image=await win.webContents.capturePage();assert(!image.isEmpty());
-  const bitmap=image.getBitmap();let colorful=0;for(let i=0;i<bitmap.length;i+=400)if(bitmap[i+2]>150&&bitmap[i+1]>120)colorful++;
+  const bitmap=image.toBitmap();let colorful=0;for(let i=0;i<bitmap.length;i+=400)if(bitmap[i+2]>150&&bitmap[i+1]>120)colorful++;
   assert(colorful>20,'3D ivory architecture did not render');
   await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(output,`desktop-${phase}.png`),image.toPNG());
   if(phase==='create'){

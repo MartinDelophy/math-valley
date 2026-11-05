@@ -42,5 +42,5 @@ function boot() {
   app.whenReady().then(()=>{registerContent();setMenu();createWindow();app.on('activate',()=>{if(!BrowserWindow.getAllWindows().length)createWindow();});});
   app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit();});
 }
-if(require.main===module){if(process.env.MATH_VALLEY_DESKTOP_SMOKE==='1')require('./smoke.cjs').run({registerContent,createWindow});else boot();}
+if(process.env.MATH_VALLEY_DESKTOP_SMOKE==='1')require('./smoke.cjs').run({registerContent,createWindow});else boot();
 module.exports={registerContent,createWindow};

@@ -17,7 +17,7 @@ export function makeStage(container){
   const loader = new THREE.TextureLoader();
   const texturedMaterials=[];
   const stoneTexture = new THREE.Texture(new ImageData(new Uint8ClampedArray([255,255,255,255]),1,1));stoneTexture.needsUpdate=true;
-  loader.load('/assets/limestone.png',loaded=>{stoneTexture.image=loaded.image;stoneTexture.needsUpdate=true;loaded.dispose();dirty=true;});
+  loader.load('/assets/limestone.png',loaded=>{stoneTexture.dispose();stoneTexture.image=loaded.image;stoneTexture.needsUpdate=true;loaded.dispose();dirty=true;});
   stoneTexture.colorSpace=THREE.SRGBColorSpace;
   stoneTexture.wrapS=stoneTexture.wrapT=THREE.RepeatWrapping;
   stoneTexture.repeat.set(.8,.8);stoneTexture.anisotropy=4;

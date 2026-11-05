@@ -19,6 +19,7 @@ extraResources:
 artifactName: Math-Valley-${version}-${os}-${arch}.${ext}
 mac:
   category: public.app-category.education
+  minimumSystemVersion: 13.0.0
   icon: build/icon.icns
   identity: '-'
   notarize: false

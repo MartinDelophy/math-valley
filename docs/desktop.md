@@ -8,8 +8,8 @@ Get desktop packages from [GitHub Releases](https://github.com/MartinDelophy/mat
 
 | Platform | Package |
 | --- | --- |
-| Apple Silicon Mac | `Math-Valley-<version>-mac-arm64.dmg` |
-| Intel Mac | `Math-Valley-<version>-mac-x64.dmg` |
+| Apple Silicon Mac, macOS 13+ | `Math-Valley-<version>-mac-arm64.dmg` |
+| Intel Mac, macOS 13+ | `Math-Valley-<version>-mac-x64.dmg` |
 | Windows 64-bit | `Math-Valley-<version>-windows-x64-setup.exe` |
 | Windows portable | `Math-Valley-<version>-windows-x64-portable.exe` |
 
