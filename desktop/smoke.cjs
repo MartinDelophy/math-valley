@@ -4,7 +4,7 @@ const {app}=require('electron');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 const {once}=require('node:events');
 async function waitFor(win,expression) {
- const deadline=Date.now()+30000;
+ const deadline=Date.now()+60000;
  while(Date.now()<deadline){if(await win.webContents.executeJavaScript(expression))return;await new Promise(resolve=>setTimeout(resolve,100));}
  throw Error(`Desktop renderer did not become ready: ${expression}`);
 }
@@ -12,13 +12,14 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
+ if(process.env.MATH_VALLEY_SMOKE_SOFTWARE==='true'){app.disableHardwareAcceleration();app.commandLine.appendSwitch('use-gl','angle');app.commandLine.appendSwitch('use-angle','swiftshader-webgl');app.commandLine.appendSwitch('enable-unsafe-swiftshader');app.commandLine.appendSwitch('force-prefers-reduced-motion');}
  if(phase==='reduced')app.commandLine.appendSwitch('force-prefers-reduced-motion');
  console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged})`);
  let win;const errors=[],failed=[];
- const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},60000);
+ const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},90000);
  try{
   await app.whenReady();registerContent();
-  win=createWindow({show:false,backgroundThrottling:false,width:1672,height:941,testViewport:true});
+  win=createWindow({show:process.env.CI==='true',backgroundThrottling:false,width:1672,height:941,testViewport:true});
   win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
   win.webContents.session.webRequest.onErrorOccurred(details=>failed.push({url:details.url,error:details.error}));
   await once(win.webContents,'did-finish-load');
@@ -77,6 +78,15 @@ async function run({registerContent,createWindow}) {
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
   const result={phase,runtime,errors,failed,persistence:phase==='create'?'created':'verified'};
   await fs.writeFile(path.join(output,`desktop-${phase}.json`),JSON.stringify(result,null,2));console.log(JSON.stringify(result));clearTimeout(timeout);win.destroy();app.exit(0);
- }catch(error){console.error(error);clearTimeout(timeout);win?.destroy();app.exit(1);}
+ }catch(error){
+  console.error(error);clearTimeout(timeout);
+  try{await fs.mkdir(output,{recursive:true});if(win&&!win.isDestroyed()){
+   await fs.writeFile(path.join(output,`desktop-${phase}-failure.png`),(await win.webContents.capturePage()).toPNG());
+   const state=await win.webContents.executeJavaScript("({text:document.body.innerText,compass:document.querySelector('.compass-face span')?.textContent,buttons:[...document.querySelectorAll('button')].map(button=>({text:button.textContent,label:button.getAttribute('aria-label'),disabled:button.disabled})),hidden:document.hidden})");
+   console.error('Renderer state:',JSON.stringify(state));await fs.writeFile(path.join(output,`desktop-${phase}-failure.json`),JSON.stringify({message:error.message,state,errors,failed},null,2));
+  }}catch(diagnosticError){console.error('Unable to capture diagnostics',diagnosticError.message);}
+  win?.destroy();app.exit(1);
+ }
+
 }
 module.exports={run};

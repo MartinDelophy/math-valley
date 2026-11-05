@@ -51,7 +51,7 @@ On macOS, pass `--arm64` or `--x64` directly to the desktop builder when selecti
 
 ## Release workflow
 
-`Desktop release` in GitHub Actions builds on macOS ARM64, macOS Intel and Windows x64. Each native runner smoke-tests its packaged executable: bundled origin, WebGL frame, asset loading, language changes, first teaching entry, and IndexedDB persistence across separate app processes, plus saved layer/energy/camera restoration and reduced-motion entry. Renderer errors and failed resource requests fail the job. Only after every platform passes can a draft prerelease be assembled, with SHA-256 hashes.
+`Desktop release` in GitHub Actions builds on macOS ARM64, macOS Intel and Windows x64. Each native runner smoke-tests its packaged executable: bundled origin, WebGL frame, asset loading, language changes, first teaching entry, and IndexedDB persistence across separate app processes, plus saved layer/energy/camera restoration and reduced-motion entry. Renderer errors and failed resource requests fail the job. GPU-less Intel Mac CI runners opt into the bundled SwiftShader WebGL fallback and reduced motion only in isolated diagnostic mode with trusted bundled content; normal application launches keep the system graphics backend. Only after every platform passes can a draft prerelease be assembled, with SHA-256 hashes.
 
 A `v<desktop/package.json version>` tag triggers this workflow. It can also run manually; choose **Create a draft** to assemble a draft with the matching version tag after validation. The tag is created at the exact workflow commit and never moved. Existing published releases are never overwritten. Publishing a draft is a separate final step.
 
