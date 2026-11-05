@@ -12,9 +12,9 @@ async function run({registerContent,createWindow}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
- if(process.env.MATH_VALLEY_SMOKE_SOFTWARE==='true'){app.disableHardwareAcceleration();app.commandLine.appendSwitch('use-gl','angle');app.commandLine.appendSwitch('use-angle','swiftshader-webgl');app.commandLine.appendSwitch('enable-unsafe-swiftshader');app.commandLine.appendSwitch('force-prefers-reduced-motion');}
  if(phase==='reduced')app.commandLine.appendSwitch('force-prefers-reduced-motion');
- console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged})`);
+ console.log(`Desktop smoke: ${phase} (packaged=${app.isPackaged}, arch=${process.arch})`);
+ if(process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH)assert.equal(process.arch,process.env.MATH_VALLEY_SMOKE_EXPECT_ARCH);
  let win;const errors=[],failed=[];
  const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},90000);
  try{
@@ -76,7 +76,7 @@ async function run({registerContent,createWindow}) {
    }
   }
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
-  const result={phase,runtime,errors,failed,persistence:phase==='create'?'created':'verified'};
+  const result={phase,arch:process.arch,runtime,errors,failed,persistence:phase==='create'?'created':'verified'};
   await fs.writeFile(path.join(output,`desktop-${phase}.json`),JSON.stringify(result,null,2));console.log(JSON.stringify(result));clearTimeout(timeout);win.destroy();app.exit(0);
  }catch(error){
   console.error(error);clearTimeout(timeout);
