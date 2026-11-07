@@ -10,11 +10,11 @@
 
 A playable 3D mathematics journey. Rotate miniature architecture, traverse layered galleries, build mathematical objects, and submit evidence for your solution.
 
+![Math Valley prologue gameplay: turn the bridge 90 degrees to connect the stairs, then walk across.](docs/screenshots/rotation-bridge.gif)
+
+[Play online](https://math-valley.vercel.app/) · [Download for Mac or Windows](https://github.com/MartinDelophy/math-valley/releases) · [How the rotation puzzle works (中文)](docs/rotation-bridge.md) · [Report an issue](https://github.com/MartinDelophy/math-valley/issues)
+
 **简体中文 · 繁體中文 · English · 日本語 · 한국어 · Français · Deutsch · Español · Português** — use the gear button on the title screen or **Journey menu → Settings**. Objectives, principle notes, hints, actions, feedback and all four chapters are localized. Switching language preserves the current puzzle state; the chosen language is remembered on this browser origin.
-
-![Math Valley gameplay](docs/screenshots/gameplay-en.png)
-
-[Play online](https://math-valley.vercel.app/) · [Report an issue](https://github.com/MartinDelophy/math-valley/issues)
 
 ## Desktop app
 
@@ -116,3 +116,7 @@ This is a playable prototype. Architectural ornament and difficulty balancing re
 The right-hand journal uses Observe/Reasoning tabs and paginated text, with the main action fixed below. Updates preserve progress by stable level ID. Use **Journey save** on the title screen for portable JSON backups; imported saves preserve the current journey as a backup first. See [save compatibility](docs/save-format.md).
 
 The current edition has **44 formal puzzles plus the prologue**, with piano BGM and sound effects only. Guidance uses text and live demonstrations, without TTS. See [new chapter mathematics](docs/chapters-iii-iv.md).
+
+## License
+
+The project source code and code documentation are available under the [MIT License](LICENSE). Game artwork, screenshots, video, audio, fonts, and other media are outside this grant. See the [asset credits](docs/assets.md) and [third-party notices](public/THIRD-PARTY-NOTICES.txt) for applicable terms.
