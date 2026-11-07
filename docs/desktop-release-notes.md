@@ -1,3 +1,7 @@
+本版新增章节整页翻动、页底章节导航，以及按钮的指针、悬停和按下反馈。修正「继续旅程」按钮外围的矩形底色。
+
+This beta adds full-page chapter turns, chapter navigation at the foot of the book, and pointer, hover, and pressed feedback. It also removes the rectangular fringe around the Continue Journey plate.
+
 Math Valley 0.2 desktop beta: 44 mathematical puzzles, nine languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
 
 下载 / Downloads:

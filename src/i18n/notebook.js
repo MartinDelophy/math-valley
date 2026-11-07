@@ -1,4 +1,6 @@
 export const notebookMessages=[
+ ["上一章","Previous chapter","前の章","이전 장"],
+ ["下一章","Next chapter","次の章","다음 장"],
 ["方向改变", "The direction changes.", "向きが変わる。", "방향은 바뀌어도"],
 ["长度不变", "The length stays.", "長さは同じ。", "길이는 그대로"],
  ["打开手记","Open notes","手記を開く","노트 열기"],

@@ -52,3 +52,105 @@
 @font-face{font-family:JournalInk;src:url('/assets/NotoSerifSC-Semibold.woff2') format('woff2');font-weight:600;font-display:swap}
 .journal h2,.journal h3{font-family:JournalInk,MathSong,'Songti SC',serif}
 @media(max-width:680px){.journal-backdrop{overflow-x:hidden;overflow-y:auto}.journal{width:min(480px,calc(100vw - 40px))}}
+
+.chapter-turn-nav {
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+ align-items:center;
+ gap:8px;
+ margin:6px 0 0;
+ border-top:1px solid #b8996a55;
+ flex:none;
+ color:#806343;
+ font-size:13px;
+}
+.chapter-turn-nav button {
+ display:flex;
+ align-items:center;
+ justify-self:start;
+ align-self:stretch;
+ gap:5px;
+ min-width:0;
+ min-height:44px;
+ padding:4px;
+ border:0;
+ background:transparent;
+ color:#715438;
+ font:inherit;
+ text-align:start;
+ overflow-wrap:anywhere;
+}
+.chapter-turn-nav button:last-child {justify-self:end;text-align:end}
+.chapter-turn-nav button svg {flex:none}
+.chapter-turn-nav button[aria-disabled=true] {opacity:.45;cursor:default}
+.chapter-turn-nav button:not([aria-disabled=true]):hover {color:#347267}
+.chapter-turn-nav button:focus-visible {outline:2px solid #347267;outline-offset:-2px}
+/* Each chapter is printed on a two-sided leaf hinged at the spine. */
+.chapter-leaf {
+ position:absolute;
+ z-index:2;
+ inset:4% 4% 10% 50%;
+ pointer-events:none;
+ transform-origin:left center;
+ transform-style:preserve-3d;
+ animation:chapter-leaf-turn 560ms cubic-bezier(.45,.05,.3,1) both;
+}
+.chapter-leaf[data-direction="-1"] {animation-direction:reverse}
+.chapter-leaf-face {
+ position:absolute;
+ inset:0;
+ display:flex;
+ flex-direction:column;
+ overflow:hidden;
+ border-radius:3px 10px 10px 3px;
+ background:#f3e6d2 url('/assets/journal/paper-mobile.png') center/100% 100% no-repeat;
+ box-shadow:6px 6px 18px #422d4340;
+ backface-visibility:hidden;
+}
+.chapter-leaf-content {
+ position:absolute;
+ inset:7.55% 6.52% 5.81% 0;
+ display:flex;
+ flex-direction:column;
+ overflow:hidden;
+ padding:8% 1% 0 10%;
+}
+.chapter-leaf-back {transform:rotateY(180deg)}
+@keyframes chapter-leaf-turn {
+ 0% {transform:perspective(2300px) rotateY(0);opacity:1}
+ 42% {transform:perspective(2300px) rotateY(-76deg) skewY(-4deg)}
+ 82% {opacity:1}
+ 100% {transform:perspective(2300px) rotateY(-178deg);opacity:0}
+}
+@media(max-width:1100px),(max-height:760px) {
+ .chapter-leaf-content {padding-top:7%}
+}
+@media(max-width:680px) {
+ .chapter-leaf {inset:0 0 0 50%;animation-duration:1ms;visibility:hidden}
+}
+@media(prefers-reduced-motion:reduce) {
+ .chapter-leaf {animation-duration:1ms}
+}
+
+.journal :is(.chapter-turn-nav,.chapter-pagination) button[aria-disabled=true],
+.journal button:disabled {cursor:default}
+@media(hover:hover) {
+ .journal-menu .journal-chapter:hover {
+  background-color:#b98a4b16;
+  color:#28695f;
+ }
+ .journal-menu .chapter-pagination button:hover:not(:disabled),
+ .journal-menu .chapter-turn-nav button:hover:not([aria-disabled=true]),
+ .journal-menu .journal-text-button:hover,
+ .journal-menu .journal-close:hover {
+  background-color:#b98a4b19;
+  color:#28695f;
+  border-radius:5px;
+ }
+}
+.journal-menu :is(.journal-chapter,.chapter-turn-nav button:not([aria-disabled=true]),.chapter-pagination button:not(:disabled)):active {
+ background-color:#b98a4b29;
+}
+.journal-menu .journal-right[aria-busy=true] :is(.journal-chapter,.chapter-pagination button) {cursor:default}
+
+.journal-menu .chapter-list .journal-chapter {padding-block:clamp(6px,1vh,12px)}

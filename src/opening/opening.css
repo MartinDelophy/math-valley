@@ -24,3 +24,32 @@ html[data-script=latin] .opening-local-name{font-size:clamp(23px,2.45vw,41px);le
 @media(max-width:680px){.opening-footer{width:auto;align-self:center;margin-top:18px;display:flex;justify-content:center}html[data-script=latin] .opening-local-name{font-size:23px}html[data-script=latin] .opening-tagline{font-size:13px}html[data-script=latin] .opening-primary{font-size:27px}html[data-script=latin] .opening-chapter{font-size:14px}html[data-script=latin] .opening-level{font-size:19px}html[data-script=latin] .opening-new{font-size:16px}}
 
 .opening-dialog .save-tools{margin-top:18px;padding-top:17px;color:#755b49}.opening-dialog .save-tools .settings-help{font-size:12px;line-height:1.8;color:#8b7463}.opening-dialog .save-tools-actions{grid-template-columns:1fr 1fr}.opening-dialog .save-tools-actions>button{min-height:43px;font-size:13px}.opening-dialog .save-tools-title{font-size:17px}.opening-dialog .save-tools h3{display:flex;gap:8px;align-items:center;font-size:17px;font-weight:500;margin:0 0 12px}.opening-dialog .opening-archives{margin-top:20px}
+
+/* Clip the button artwork, leaving the focus outline and label independent. */
+.opening-plate.opening-primary {
+ position:relative;
+ isolation:isolate;
+ border-radius:999px;
+ background-image:none;
+ overflow:visible;
+}
+.opening-primary::before {
+ content:'';
+ position:absolute;
+ inset:0;
+ z-index:-1;
+ pointer-events:none;
+ background:url('/assets/opening/ivory-button.png') center/100% 100% no-repeat;
+ clip-path:inset(4% 1% round 999px);
+}
+.opening-plate.opening-primary:hover:not(:disabled) {filter:none}
+@media(hover:hover) {
+ .opening-primary:hover:not(:disabled)::before {filter:brightness(1.06) saturate(1.08)}
+ .opening-new:hover:not(:disabled),
+ .opening-history:hover:not(:disabled),
+ .opening-motion:hover:not(:disabled) {color:#fff0c6}
+ .opening-archive:hover,
+ .opening-close:hover {background-color:#b98a4b19;color:#28695f}
+}
+.opening-primary:active:not(:disabled)::before {filter:brightness(.96)}
+.opening-primary:disabled {cursor:default}
