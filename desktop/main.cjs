@@ -16,6 +16,11 @@ function openLink(url) { if (LINKS.has(url)) shell.openExternal(url); }
 function createWindow({show=true,backgroundThrottling=true,width=1440,height=900,testViewport=false}={}) {
   const win = new BrowserWindow({width,height,useContentSize:testViewport,enableLargerThanScreen:testViewport,minWidth:800,minHeight:600,show:false,title:APP_NAME,backgroundColor:'#35264f',autoHideMenuBar:process.platform!=='darwin',webPreferences:{backgroundThrottling,nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,webviewTag:false}});
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+  // Let the renderer handle game undo before the native Edit menu consumes it.
+  win.webContents.on('before-input-event',(_event,input)=>{
+    const undo=input.key.toLowerCase()==='z'&&input.meta!==input.control&&!input.alt&&!input.shift;
+    win.webContents.setIgnoreMenuShortcuts(undo);
+  });
   win.webContents.on('will-navigate',(event,url)=>{if(!isAppURL(url))event.preventDefault();});
   win.webContents.on('will-redirect',(event,url)=>{if(!isAppURL(url))event.preventDefault();});
   win.webContents.on('will-attach-webview',event=>event.preventDefault());
@@ -42,5 +47,5 @@ function boot() {
   app.whenReady().then(()=>{registerContent();setMenu();createWindow();app.on('activate',()=>{if(!BrowserWindow.getAllWindows().length)createWindow();});});
   app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit();});
 }
-if(process.env.MATH_VALLEY_DESKTOP_SMOKE==='1')require('./smoke.cjs').run({registerContent,createWindow});else boot();
+if(process.env.MATH_VALLEY_DESKTOP_SMOKE==='1')require('./smoke.cjs').run({registerContent,createWindow,setMenu});else boot();
 module.exports={registerContent,createWindow};

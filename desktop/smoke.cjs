@@ -8,7 +8,7 @@ async function waitFor(win,expression) {
  while(Date.now()<deadline){if(await win.webContents.executeJavaScript(expression))return;await new Promise(resolve=>setTimeout(resolve,100));}
  throw Error(`Desktop renderer did not become ready: ${expression}`);
 }
-async function run({registerContent,createWindow}) {
+async function run({registerContent,createWindow,setMenu}) {
  app.setName('Math Valley desktop smoke');
  app.setPath('userData',process.env.MATH_VALLEY_SMOKE_PROFILE);
  const output=process.env.MATH_VALLEY_SMOKE_OUTPUT,phase=process.env.MATH_VALLEY_SMOKE_PHASE;
@@ -18,7 +18,7 @@ async function run({registerContent,createWindow}) {
  let win;const errors=[],failed=[];
  const timeout=setTimeout(()=>{console.error('Desktop smoke timed out');app.exit(1);},['review','notebook','expansion'].includes(phase)?340000:90000);
  try{
-  await app.whenReady();registerContent();
+  await app.whenReady();registerContent();if(phase==='verify')setMenu();
   win=createWindow({show:process.env.CI==='true',backgroundThrottling:false,width:1672,height:941,testViewport:true});
   win.webContents.on('render-process-gone',(_event,details)=>console.error('Renderer process exited',JSON.stringify(details)));
   win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
@@ -73,7 +73,15 @@ async function run({registerContent,createWindow}) {
     await waitFor(win,"Boolean(document.querySelector('.paper-primary')) && !document.querySelector('.paper-primary').disabled && !document.querySelector('[aria-labelledby=\"teaching-title\"]')");
     await win.webContents.executeJavaScript("document.querySelector('.paper-primary').click()");
     await waitFor(win,"document.querySelector('.paper-primary').disabled");
-    await waitFor(win,"!document.querySelector('.paper-primary').disabled");
+    await waitFor(win,"!document.querySelector('.paper-primary').disabled && !document.querySelector('.compass-undo').disabled");
+    win.show();win.focus();win.webContents.focus();
+    const shortcut={keyCode:'Z',modifiers:[process.platform==='darwin'?'meta':'control']};
+    win.webContents.sendInputEvent({type:'keyDown',...shortcut});
+    win.webContents.sendInputEvent({type:'keyUp',...shortcut});
+    await waitFor(win,"document.querySelector('.compass-undo').disabled && !document.querySelector('.paper-primary').disabled");
+    console.log('Desktop undo shortcut restored the previous move');
+    await win.webContents.executeJavaScript("document.querySelector('.paper-primary').click()");
+    await waitFor(win,"!document.querySelector('.paper-primary').disabled && !document.querySelector('.compass-undo').disabled");
     await win.webContents.executeJavaScript("document.querySelector('[aria-label=\"向右切换视角 E\"]').click()");
     await waitFor(win,"document.querySelector('.compass-face span').textContent==='Ⅱ'");
     await win.webContents.executeJavaScript("document.querySelector('.quiet-menu').click()");

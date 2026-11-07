@@ -8,11 +8,12 @@ import {ExpansionContent} from './expansion/ExpansionContent';
 import { TopologyContent } from './topology/TopologyContent';
 import {Notebook,PrinciplePages} from './notebook/Notebook';
 
+const undoShortcut=/^Mac/.test(globalThis.navigator?.platform)?'⌘Z':'Ctrl+Z';
 const romans=['Ⅰ','Ⅱ','Ⅲ','Ⅳ'];
 const galleryNames={CX:'侧廊',CE:'高廊',AK:'外廊',AD:'中庭',FJ:'回廊',FT:'归途'};
 const floor=n=>n?.y>4.5?'上层':n?.y>2?'中层':'下层';
 
-export function FoldedHud({intro,level:L,game:g,engine,open,paperOpen,setPaperOpen,blocked,shown}){
+export function FoldedHud({intro,level:L,game:g,engine,undoButton,open,paperOpen,setPaperOpen,blocked,shown}){
  const [routesOpen,setRoutesOpen]=useState(false);
  useEffect(()=>setRoutesOpen(false),[L?.id,g.position]);
  const run=(method,...args)=>engine.current?.[method]?.(...args);
@@ -51,7 +52,7 @@ export function FoldedHud({intro,level:L,game:g,engine,open,paperOpen,setPaperOp
    <button className="compass-arrow" aria-label={t("向左切换视角 Q")} disabled={g.walking} onClick={()=>run('turnView',-1)}><ArrowArcLeft size={27} weight="light"/><kbd>Q</kbd></button>
    <div className="compass-face"><img src="/assets/hud/compass-frame.png" alt=""/><span aria-live="polite">{t(g.camera?.overhead?'俯':romans[g.camera?.index??0])}</span></div>
    <button className="compass-arrow" aria-label={t("向右切换视角 E")} disabled={g.walking} onClick={()=>run('turnView',1)}><ArrowArcRight size={27} weight="light"/><kbd>E</kbd></button>
-   <span className="compass-divider"/><button className="compass-undo" aria-label={t("撤一步")} title={t("撤回上一步")} disabled={busy||(!spatial&&!route&&!(L?.chapter>=2))||(!g.history&&!g.paths?.length&&!(g.draft?.length>1))} onClick={()=>run('undo')}><ArrowUUpLeft size={27} weight="light"/></button>
+   <span className="compass-divider"/><button ref={undoButton} className="compass-undo" aria-label={t("撤一步")} aria-keyshortcuts="Meta+Z Control+Z" title={`${t("撤回上一步")} (${undoShortcut})`} disabled={busy||(!spatial&&!route&&!(L?.chapter>=2))||(!g.history&&!g.paths?.length&&!(g.draft?.length>1))} onClick={()=>run('undo')}><ArrowUUpLeft size={27} weight="light"/><kbd aria-hidden="true">{undoShortcut}</kbd></button>
   </nav>)}
   <aside className={`folded-paper ${paperOpen?'is-open':''}`} aria-label={t("旅途手札")} inert={Boolean(shown)}>
    <img className="paper-art" src="/assets/hud/folded-paper.png" alt="" draggable="false"/>

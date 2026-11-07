@@ -1,3 +1,7 @@
+本版新增撤回上一步的快捷键：Mac 按 ⌘Z，Windows 按 Ctrl+Z。「给你一点线索」也调整了字号和留白，让线索和底部按钮能在一屏内读完。
+
+Undo the last move with ⌘Z on Mac or Ctrl+Z on Windows. The hint page uses more compact typography and spacing so the clues and return button fit on one screen.
+
 本版新增章节整页翻动、页底章节导航，以及按钮的指针、悬停和按下反馈。修正「继续旅程」按钮外围的矩形底色。
 
 This beta adds full-page chapter turns, chapter navigation at the foot of the book, and pointer, hover, and pressed feedback. It also removes the rectangular fringe around the Continue Journey plate.

@@ -154,3 +154,50 @@
 .journal-menu .journal-right[aria-busy=true] :is(.journal-chapter,.chapter-pagination button) {cursor:default}
 
 .journal-menu .chapter-list .journal-chapter {padding-block:clamp(6px,1vh,12px)}
+
+/* A hint is a short note. Reserve room for both actions on the same spread. */
+.journal.journal-hint .journal-right {
+ padding-top:3%;
+}
+.journal.journal-hint .journal-page-heading h2 {
+ font-size:clamp(18px,2.15vh,26px);
+ line-height:1.35;
+ letter-spacing:.025em;
+ white-space:normal;
+}
+.journal.journal-hint .journal-heading-rule {margin-top:8px}
+.journal.journal-hint .journal-lead,
+.journal.journal-hint .journal-note p {
+ font-size:clamp(13px,1.55vh,16px);
+ line-height:1.55;
+ letter-spacing:0;
+ overflow-wrap:anywhere;
+}
+.journal.journal-hint .journal-lead {margin:12px 0 4px}
+.journal.journal-hint .hint-notes {
+ flex:none;
+ margin:0 0 8px;
+}
+.journal.journal-hint .hint-notes .journal-note {
+ grid-template-columns:26px minmax(0,1fr);
+ gap:7px;
+ padding:8px 0;
+}
+.journal.journal-hint .note-number {font-size:20px}
+.journal.journal-hint .journal-note h3 {
+ font-size:clamp(15px,1.8vh,18px);
+ line-height:1.35;
+ margin:0 0 3px;
+}
+.journal.journal-hint .journal-cta {
+ min-height:44px;
+ padding:7px 14px;
+ font-size:clamp(14px,1.75vh,18px);
+}
+.journal.journal-hint .journal-text-button {margin-top:3px}
+@media(max-width:680px) {
+ .journal.journal-hint .journal-left {display:none}
+ .journal.journal-hint .journal-pages {padding-top:37px}
+ .journal.journal-hint .journal-right {padding-top:0}
+ .journal.journal-hint .journal-lead {text-align:start}
+}
