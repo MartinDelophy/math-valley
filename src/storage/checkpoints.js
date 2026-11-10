@@ -7,7 +7,7 @@ const list=(value,valid,max=100)=>Array.isArray(value)&&value.length<=max&&value
 const unique=value=>new Set(value).size===value.length;
 // Ignore editorial text, but invalidate a checkpoint if authored rules change.
 export function levelFingerprint(level){
- const fields=['id','chapter','mode','nodes','edges','s','t','seals','energyLimit','target','required','maxAdded','allConnected','internal','initialFlow','kind','scene','sheets','start','actions','checkpoints','budget','targetWord','targetLayer','evidence','construct','range','permutations','targetPermutation','requireNontrivial','minCancellations','n','task','bits','message','errors','relayMessage','relayErrors','editable','received','erasures','twoStage','exhaustive'];
+ const fields=['id','chapter','mode','nodes','edges','s','t','seals','energyLimit','target','required','maxAdded','allConnected','internal','initialFlow','kind','scene','sheets','start','actions','checkpoints','budget','targetWord','targetLayer','evidence','construct','range','permutations','targetPermutation','requireNontrivial','minCancellations','n','task','bits','message','errors','relayMessage','relayErrors','editable','received','erasures','twoStage','exhaustive','moduli','residues','divisors'];
  const rules=Object.fromEntries(fields.filter(key=>level[key]!==undefined).map(key=>[key,level[key]]));
  if(level.phases)rules.phases=level.phases.map(({mode,target,internal})=>({mode,target,internal}));
  let hash=2166136261;for(const char of JSON.stringify(rules))hash=Math.imul(hash^char.charCodeAt(0),16777619);return (hash>>>0).toString(16);

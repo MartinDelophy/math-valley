@@ -32,11 +32,24 @@ async function review({win,output,waitFor}){
    const selector='[data-math-action="s"]';if(await js(`document.querySelector('${selector}').textContent.includes('对齐')`)){await click(selector);await waitFor(win,"!document.querySelector('.notebook-action').disabled");}await click(selector);
   }else if(method==='bit'){
    const view=fixture.views[arg];const current=await js("['Ⅰ','Ⅱ','Ⅲ','Ⅳ'].indexOf(document.querySelector('.compass-face span').textContent)");if(current!==view){await click(`[data-bit="${arg}"]`);await waitFor(win,"!document.querySelector('.notebook-action').disabled");}await click(`[data-bit="${arg}"]`);
+  }else if(method==='jump'||method==='divisor'){
+   await click(method==='jump'?`[data-clock-jump="${arg}"]`:`[data-clock-divisor="${arg}"]`);
   }else await click(method==='test'?'.notebook-action':`[data-math-action="${method}"]`);
   trace.push(action);const c=await savedCount(trace.length);assert.deepEqual(c.actions,trace);
   if(trace.length===2){
-   // Real reload proves that new engines restore their own checkpoint and camera.
-   const camera=c.camera;loaded=once(win.webContents,'did-finish-load');win.webContents.reload();await loaded;await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");await click('.opening-primary');await waitFor(win,"!document.querySelector('.opening-screen')&&Boolean(document.querySelector('.expansion-notebook'))");await waitFor(win,"!document.querySelector('.notebook-action').disabled");const resumed=await checkpoint();assert.deepEqual(resumed.actions,trace);assert.deepEqual(resumed.camera,camera);
+   // A renderer reload verifies checkpoint and camera restoration.
+   const camera=c.camera;
+   loaded=once(win.webContents,'did-finish-load');
+   win.webContents.reload();
+   await loaded;
+   await waitFor(win,"Boolean(document.querySelector('.opening-primary'))");
+   win.show();win.focus();win.webContents.focus();
+   await click('.opening-primary');
+   await waitFor(win,"!document.querySelector('.opening-screen')&&Boolean(document.querySelector('.expansion-notebook'))");
+   await waitFor(win,"!document.querySelector('.notebook-action').disabled");
+   const resumed=await checkpoint();
+   assert.deepEqual(resumed.actions,trace);
+   assert.deepEqual(resumed.camera,camera);
   }
  }
  await click('.notebook-action');await waitFor(win,"Boolean(document.querySelector('.journal-success'))");assert((await checkpoint()).won);await delay(250);await fs.writeFile(path.join(output,'scene-success.png'),(await win.webContents.capturePage()).toPNG());await fs.writeFile(path.join(output,'result.json'),JSON.stringify({id:fixture.id,passed:true,actions:trace.length,checkpoint:await checkpoint()},null,2));console.log(`Expansion native playthrough passed: ${fixture.id} (${trace.length} actions)`);

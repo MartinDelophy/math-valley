@@ -5,7 +5,9 @@ import {notebookMessages} from './notebook.js';
 import {teachingMessages} from './teaching.js';
 import {settingsMessages} from './settings.js';
 import {openingMessages} from './opening.js';
+import {congruenceMessages} from './congruence.js';
 export const messages=[
+ ...congruenceMessages,
  ...Object.keys(expansion.en).map(key=>[key,expansion.en[key],expansion.ja[key],expansion.ko[key]]),
  ...saveMessages,
  ...notebookMessages,

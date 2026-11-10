@@ -1,3 +1,4 @@
+import {evaluateCongruence,stepCongruence} from '../number-theory/math.js';
 export const mod=(x,n)=>(x%n+n)%n;
 export const element=g=>g.m?`r^${g.k}s`:`r^${g.k}`;
 export const groupLabel=g=>g.k===0?(g.m?'s':'e'):`r${g.k===1?'':`^${g.k}`}${g.m?'s':''}`;
@@ -14,9 +15,10 @@ export const codebook=(extended=false)=>Array.from({length:16},(_,i)=>encode([3,
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export function received(L,phase=0){if(L.received)return [...L.received];const second=L.task==='relay'&&phase===1,b=encode(second?L.relayMessage:L.message,L.bits===8);for(const i of (second?L.relayErrors:L.errors)||[])b[i]^=1;return b;}
 function initialBits(L){if(['encode','capstone'].includes(L.task)){const b=encode(L.message,L.bits===8);for(const i of L.editable)b[i]^=1;return b;}const b=received(L);for(const i of L.erasures||[])b[i]=0;return b;}
-export function initialExpansion(L){return L.chapter===3?{k:0,m:0,raw:[],marks:[],visited:['r^0'],phase:0,energy:0,samples:[]}:{bits:initialBits(L),touched:[],marks:[],phase:0,energy:0,samples:[]};}
+export function initialExpansion(L){if(L.mode==='congruence')return {x:L.start,energy:0,divisor:null};return L.chapter===3?{k:0,m:0,raw:[],marks:[],visited:['r^0'],phase:0,energy:0,samples:[]}:{bits:initialBits(L),touched:[],marks:[],phase:0,energy:0,samples:[]};}
 const setEqual=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
 export function evaluation(L,s){
+ if(L.mode==='congruence')return evaluateCongruence(L,s);
  let pass=false;
  if(L.chapter===3){
  const word=s.raw.join(''),want=f=>elements(L.n).filter(f).map(element),stabilizer=want(g=>image(g,0,L.n)===0);
@@ -47,6 +49,7 @@ export function evaluation(L,s){
 export const editable=(L,s)=>L.chapter===4?L.task==='capstone'&&s.phase===1||!L.editable?Array.from({length:L.bits},(_,i)=>i):L.editable:[];
 export const bitView=i=>i===7?3:Math.log2((i+1)&-(i+1));
 export function stepExpansion(L,s,action){
+ if(L.mode==='congruence')return stepCongruence(L,s,action);
  const x=structuredClone(s),[method,arg]=action;
 
  if(method==='test'){

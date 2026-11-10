@@ -47,16 +47,22 @@ export function StartScreen({profile,hasJourney,archives=[],isStale=false,onCont
  useEffect(()=>{document.title=`Math Valley · ${t('旅程的起点')}`;},[locale]);
  async function begin(action){
   if(locked.current)return;locked.current=true;setBusy(true);setError('');
+  let entryTimer;
   try{
    if(!await action()){setError('这次没有保存成功，原旅程仍然保留。请重试。');return;}
    if(!mounted.current)return;
    setPanel(null);setDeparting(true);
    // The destination is mounted behind the opaque opening while the camera
    // travels, so the final dissolve reveals a rendered scene instead of blank.
-   const complete=scene.current?await scene.current.enter():true;
+   const complete=scene.current?await Promise.race([
+    scene.current.enter(),
+    // The saved game is already mounted. A stalled WebGL transition must
+    // not keep the player behind the opening screen.
+    new Promise(resolve=>{entryTimer=setTimeout(()=>resolve(true),3000);}),
+   ]):true;
    if(complete&&mounted.current)onEntered?.();
   }catch{setError('这次没有保存成功，原旅程仍然保留。请重试。');setDeparting(false);if(root.current)root.current.style.opacity='1';}
-  finally{if(mounted.current){locked.current=false;setBusy(false);}}
+  finally{clearTimeout(entryTimer);if(mounted.current){locked.current=false;setBusy(false);}}
  }
  const done=profile.completed.filter(id=>LEVELS.some(level=>level.id===id)).length,current=LEVELS.find(level=>level.id===profile.currentLevel);
  const chapter=current?t(chapterTitle(current)):t('序章 · 方向与旋转');

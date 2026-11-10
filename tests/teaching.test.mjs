@@ -4,18 +4,16 @@ import {LESSONS,lessonFor,readLessons,lessonStorageKey} from '../src/teaching/le
 import {initialState,evaluate,augment,flowCheck,residualReachable,cutCapacity} from '../src/chapter/math.js';
 import {solveSpatial,BASE_AZIMUTH,CAMERA_SLOPE} from '../src/chapter/spatial.js';
 import {initialTopologyState,stepTopology,topologyEvaluation,inverse} from '../src/topology/math.js';
-import {LEVELS} from '../src/chapter/levels.js';
-import {SYMMETRY_LEVELS,CODING_LEVELS} from '../src/expansion/levels.js';
-import {TOPOLOGY_LEVELS} from '../src/topology/levels.js';
+import {LEVELS} from '../src/catalog.js';
 import {translate} from '../src/i18n/core.js';
 
 test('every chapter mechanic and proof phase has an appropriate independent lesson',()=>{
  const keys=new Set(['rotation']);
- for(const level of [...LEVELS,...TOPOLOGY_LEVELS,...SYMMETRY_LEVELS,...CODING_LEVELS])for(let phase=0;phase<(level.phases?.length||((level.evidence||level.construct)?2:1));phase++)for(const interaction of ['flow','cut']){
+ for(const level of LEVELS)for(let phase=0;phase<(level.phases?.length||((level.evidence||level.construct)?2:1));phase++)for(const interaction of ['flow','cut']){
   const key=lessonFor(level,phase,interaction);assert(LESSONS[key],`${level.id}/${phase}/${interaction}`);keys.add(key);
  }
  assert.deepEqual([...keys].sort(),Object.keys(LESSONS).sort());
- for(const lesson of Object.values(LESSONS))if(lesson.level)assert(![...LEVELS,...TOPOLOGY_LEVELS,...SYMMETRY_LEVELS,...CODING_LEVELS].includes(lesson.level));
+ for(const lesson of Object.values(LESSONS))if(lesson.level)assert(!LEVELS.includes(lesson.level));
 });
 test('lesson progress is separate and distinguishes skipping from completing',()=>{
  assert.notEqual(lessonStorageKey,'math-roam-chapter-v3');

@@ -68,7 +68,7 @@ jobs:
         env:
           MATH_VALLEY_EXPANSION_EXECUTABLE: ${{ github.workspace }}/${{ matrix.executable }}
           MATH_VALLEY_SMOKE_EXPECT_ARCH: ${{ matrix.arch }}
-        run: node scripts/review-expansion.mjs 3-08 4-07
+        run: node scripts/review-expansion.mjs 3-08 4-07 5-04
       - name: Upload native diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4

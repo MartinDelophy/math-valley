@@ -115,7 +115,7 @@ This is a playable prototype. Architectural ornament and difficulty balancing re
 
 The right-hand journal uses Observe/Reasoning tabs and paginated text, with the main action fixed below. Updates preserve progress by stable level ID. Use **Journey save** on the title screen for portable JSON backups; imported saves preserve the current journey as a backup first. See [save compatibility](docs/save-format.md).
 
-The current edition has **44 formal puzzles plus the prologue**, with piano BGM and sound effects only. Guidance uses text and live demonstrations, without TTS. See [new chapter mathematics](docs/chapters-iii-iv.md).
+The current edition has **48 formal puzzles plus the prologue**, including four modular-arithmetic puzzles in the Remainder Clocktower, with piano BGM and sound effects only. Guidance uses text and live demonstrations, without TTS. See [new chapter mathematics](docs/chapters-iii-iv.md).
 
 ## License
 

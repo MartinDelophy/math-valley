@@ -1,3 +1,7 @@
+第五章「余数钟楼」新增四关。操纵 3D 钟盘，观察余数循环，应用中国剩余定理，再用公因数证明一组条件无法同时成立。全作现有 48 个正式关卡，原有存档可继续使用。
+
+Chapter V, The Remainder Clocktower, adds four puzzles about modular cycles, the Chinese remainder theorem, and common-divisor certificates. Math Valley now has 48 formal puzzles. Existing saves carry over.
+
 本版新增撤回上一步的快捷键：Mac 按 ⌘Z，Windows 按 Ctrl+Z。「给你一点线索」也调整了字号和留白，让线索和底部按钮能在一屏内读完。
 
 Undo the last move with ⌘Z on Mac or Ctrl+Z on Windows. The hint page uses more compact typography and spacing so the clues and return button fit on one screen.
@@ -6,7 +10,7 @@ Undo the last move with ⌘Z on Mac or Ctrl+Z on Windows. The hint page uses mor
 
 This beta adds full-page chapter turns, chapter navigation at the foot of the book, and pointer, hover, and pressed feedback. It also removes the rectangular fringe around the Continue Journey plate.
 
-Math Valley 0.2 desktop beta: 44 mathematical puzzles, nine languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
+Math Valley 0.2 desktop beta: 48 mathematical puzzles, nine languages, guided 3D demonstrations, and recoverable local journeys, bundled for offline play.
 
 下载 / Downloads:
 - **macOS 13+ Apple Silicon (M1/M2/M3/M4 and later):** `mac-arm64.dmg`
@@ -20,7 +24,7 @@ Math Valley 0.2 desktop beta: 44 mathematical puzzles, nine languages, guided 3D
 
 Animated opening included: slow architectural rotation with Pause/Play, a camera push into the cloister, and a dissolve into the saved puzzle. Reduced-motion settings use a brief dissolve instead. Native integration tests verified the saved layer, energy and camera after restarting the app.
 
-Validation: 166 game tests and 3 desktop protocol tests. Packaged macOS ARM64 and Windows x64 pass native integration checks; Intel Mac builds are not included in this first release: hosted Intel runners lack a usable graphics device and the Rosetta integration run did not complete. They need separate hardware validation before publication.
+Validation: 169 game tests and 3 desktop protocol tests. Packaged macOS ARM64 and Windows x64 pass native integration checks; Intel Mac builds are not included in this first release: hosted Intel runners lack a usable graphics device and the Rosetta integration run did not complete. They need separate hardware validation before publication.
 
 Language & sound settings: 简体中文, 繁體中文, English, 日本語, 한국어, Français, Deutsch, Español, Português. A gear menu controls language, piano BGM, volume, sound effects and opening motion. Long translated labels fit their button plates. Music is the complete CC0 Bach BWV 846 recording performed by Kimiko Ishizaka. Guidance uses text and teaching demonstrations without TTS. New European translations are an initial machine-assisted edition with terminology corrections.
 
