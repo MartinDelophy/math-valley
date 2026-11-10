@@ -19,7 +19,11 @@ export function createExpansionGame(container,L,cb){
   tested=false;feedback='';const record=[method,...(arg===undefined?[]:[arg])];
   if(['r','R','s','bit','jump'].includes(method)){
    const from=model.point(state),to=model.point(next);motion={from,to,next,record,method,start:performance.now(),duration:method==='s'?900:650};playEffect(method==='s'?'portal':'step');notify();
-  }else{state=next;actions.push(record);playEffect(method==='mark'?'mark':'step');model.update(state,K.viewState().index);notify();}
+  }else{
+   state=next;
+   // Browsing answers within one selection is a single undoable decision.
+   if(method==='divisor'&&actions.at(-1)?.[0]==='divisor')actions.pop();
+   actions.push(record);playEffect(method==='mark'?'mark':'step');model.update(state,K.viewState().index);notify();}
  }
  function test(){if(paused||won||motion||K.viewState().busy)return;const result=evaluation(L,state);feedback=result.detail;tested=true;if(result.final){won=true;model.update(state,K.viewState().index,won);playEffect('success');notify();}else if(result.pass){act('test');}else notify();}
  function reset(){state=initialExpansion(L);actions=[];won=false;motion=null;feedback='';tested=false;K.restoreView({index:0,zoom:K.viewState().zoom});model.update(state,0);notify();}

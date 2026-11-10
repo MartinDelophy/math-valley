@@ -19,7 +19,7 @@ async function review({win,output,waitFor}){
  }
 
  const checkpoint=()=>js(`new Promise(resolve=>{const r=indexedDB.open('math-valley');r.onsuccess=()=>{const db=r.result,tx=db.transaction('levels','readonly'),q=tx.objectStore('levels').get(${JSON.stringify(fixture.id)});tx.oncomplete=()=>{db.close();resolve(q.result?.checkpoint)};}})`);
- const savedCount=async count=>{for(let n=0;n<80;n++){const c=await checkpoint();if(c?.actions?.length===count)return c;await delay(100);}throw Error(`Checkpoint action count ${count} not reached`)};
+ const savedCount=async (count,last=null)=>{for(let n=0;n<80;n++){const c=await checkpoint();if(c?.actions?.length===count&&(!last||JSON.stringify(c.actions.at(-1))===JSON.stringify(last)))return c;await delay(100);}throw Error(`Checkpoint action count ${count} not reached`)};
  await delay(650);await fs.writeFile(path.join(output,'scene-start.png'),(await win.webContents.capturePage()).toPNG());
  // Camera changes must not change the mathematical trace.
  const before=await checkpoint();await click('.compass-arrow:nth-of-type(2)');await waitFor(win,"!document.querySelector('.notebook-action').disabled");const after=await checkpoint();assert.deepEqual(after.actions,before.actions);
@@ -32,10 +32,16 @@ async function review({win,output,waitFor}){
    const selector='[data-math-action="s"]';if(await js(`document.querySelector('${selector}').textContent.includes('对齐')`)){await click(selector);await waitFor(win,"!document.querySelector('.notebook-action').disabled");}await click(selector);
   }else if(method==='bit'){
    const view=fixture.views[arg];const current=await js("['Ⅰ','Ⅱ','Ⅲ','Ⅳ'].indexOf(document.querySelector('.compass-face span').textContent)");if(current!==view){await click(`[data-bit="${arg}"]`);await waitFor(win,"!document.querySelector('.notebook-action').disabled");}await click(`[data-bit="${arg}"]`);
-  }else if(method==='jump'||method==='divisor'){
-   await click(method==='jump'?`[data-clock-jump="${arg}"]`:`[data-clock-divisor="${arg}"]`);
+  }else if(method==='jump'){
+   await click(`[data-clock-jump="${arg}"]`);
+  }else if(method==='divisor'){
+   await click('[data-clock-divisor="3"]');
+   await savedCount(trace.length+1,['divisor',3]);
+   await click('.notebook-action');
+   await waitFor(win,"document.querySelector('.clocktower-feedback')?.textContent.includes('整除')");
+   await click(`[data-clock-divisor="${arg}"]`);
   }else await click(method==='test'?'.notebook-action':`[data-math-action="${method}"]`);
-  trace.push(action);const c=await savedCount(trace.length);assert.deepEqual(c.actions,trace);
+  trace.push(action);const c=await savedCount(trace.length,action);assert.deepEqual(c.actions,trace);
   if(trace.length===2){
    // A renderer reload verifies checkpoint and camera restoration.
    const camera=c.camera;
